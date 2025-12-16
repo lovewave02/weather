@@ -1,0 +1,62 @@
+spring:
+  application:
+    name: weather-alert-platform
+  cache:
+    type: redis
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:weather}
+    username: ${DB_USER:weather}
+    password: ${DB_PASSWORD:weather}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+
+weather:
+  provider:
+    base-url: https://api.open-meteo.com
+    connect-timeout: 3s
+    read-timeout: 5s
+
+cache:
+  current-weather-ttl: 60s
+  hourly-weather-ttl: 10m
+
+resilience4j:
+  retry:
+    instances:
+      openMeteo:
+        max-attempts: 3
+        wait-duration: 500ms
+        enable-exponential-backoff: true
+        exponential-backoff-multiplier: 2
+  circuitbreaker:
+    instances:
+      openMeteo:
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 20
+        minimum-number-of-calls: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 30s
+  ratelimiter:
+    instances:
+      openMeteo:
+        limit-for-period: 60
+        limit-refresh-period: 1m
+        timeout-duration: 0

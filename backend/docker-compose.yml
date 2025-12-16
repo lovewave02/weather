@@ -1,0 +1,48 @@
+services:
+  app:
+    build: .
+    image: weather-alert-platform:local
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: weather
+      DB_USER: weather
+      DB_PASSWORD: weather
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: weather
+      POSTGRES_USER: weather
+      POSTGRES_PASSWORD: weather
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U weather -d weather"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  postgres_data:

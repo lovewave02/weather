@@ -1,0 +1,15 @@
+target/
+.idea/
+.vscode/
+*.iml
+*.log
+.DS_Store
+
+node_modules/
+dist/
+.env
+.env.*
+coverage/
+
+### Maven Wrapper (optional)
+.mvn/wrapper/maven-wrapper.jar
