@@ -13,3 +13,7 @@ coverage/
 
 ### Maven Wrapper (optional)
 .mvn/wrapper/maven-wrapper.jar
+
+# Python cache
+__pycache__/
+*.pyc

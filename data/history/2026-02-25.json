@@ -1,0 +1,19 @@
+{
+  "updated_at_kst": "2026-02-25T23:45",
+  "location": "Seoul",
+  "current": {
+    "time": "2026-02-25T23:45",
+    "interval": 900,
+    "temperature_2m": 3.3,
+    "apparent_temperature": 0.1,
+    "precipitation_probability": 0,
+    "pm2_5": null,
+    "pm10": null
+  },
+  "daily": {
+    "date": "2026-02-25",
+    "temperature_2m_min": -3.4,
+    "temperature_2m_max": 12.5,
+    "precipitation_probability_max": 0
+  }
+}
