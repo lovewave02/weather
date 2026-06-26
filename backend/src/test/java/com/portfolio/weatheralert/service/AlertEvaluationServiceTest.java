@@ -2,6 +2,7 @@ package com.portfolio.weatheralert.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
@@ -43,7 +44,7 @@ class AlertEvaluationServiceTest {
         );
 
         Subscription subscription = new Subscription(new AppUser("a@b.com"), location, RuleType.TEMP_BELOW, 10.0);
-        given(subscriptionRepository.findByLocationIdAndEnabledTrue(any(UUID.class))).willReturn(List.of(subscription));
+        given(subscriptionRepository.findByLocationIdAndEnabledTrue(nullable(UUID.class))).willReturn(List.of(subscription));
         given(alertEventRepository.save(any(AlertEvent.class))).willAnswer(inv -> inv.getArgument(0));
 
         int created = service.evaluateSnapshot(snapshot);
@@ -70,7 +71,7 @@ class AlertEvaluationServiceTest {
         );
 
         Subscription subscription = new Subscription(new AppUser("a@b.com"), location, RuleType.TEMP_ABOVE, 20.0);
-        given(subscriptionRepository.findByLocationIdAndEnabledTrue(any(UUID.class))).willReturn(List.of(subscription));
+        given(subscriptionRepository.findByLocationIdAndEnabledTrue(nullable(UUID.class))).willReturn(List.of(subscription));
         given(alertEventRepository.save(any(AlertEvent.class))).willAnswer(inv -> inv.getArgument(0));
 
         int created = service.evaluateSnapshot(snapshot);
@@ -92,7 +93,7 @@ class AlertEvaluationServiceTest {
         );
 
         Subscription subscription = new Subscription(new AppUser("a@b.com"), location, RuleType.PRECIP_ABOVE, 1.0);
-        given(subscriptionRepository.findByLocationIdAndEnabledTrue(any(UUID.class))).willReturn(List.of(subscription));
+        given(subscriptionRepository.findByLocationIdAndEnabledTrue(nullable(UUID.class))).willReturn(List.of(subscription));
         given(alertEventRepository.save(any(AlertEvent.class))).willAnswer(inv -> inv.getArgument(0));
 
         int created = service.evaluateSnapshot(snapshot);
@@ -114,7 +115,7 @@ class AlertEvaluationServiceTest {
         );
 
         Subscription subscription = new Subscription(new AppUser("a@b.com"), location, RuleType.TEMP_BELOW, 10.0);
-        given(subscriptionRepository.findByLocationIdAndEnabledTrue(any(UUID.class))).willReturn(List.of(subscription));
+        given(subscriptionRepository.findByLocationIdAndEnabledTrue(nullable(UUID.class))).willReturn(List.of(subscription));
         given(alertEventRepository.save(any(AlertEvent.class))).willAnswer(inv -> inv.getArgument(0));
 
         int created = service.evaluateSnapshot(snapshot);
