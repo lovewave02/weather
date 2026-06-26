@@ -29,3 +29,18 @@
 ```bash
 python scripts/daily_weather_update.py
 ```
+
+## Project Operations
+
+- Contribution guide: [`CONTRIBUTING.md`](CONTRIBUTING.md)
+- Release checklist: [`docs/RELEASE_CHECKLIST.md`](docs/RELEASE_CHECKLIST.md)
+- Changelog: [`CHANGELOG.md`](CHANGELOG.md)
+
+## Maintainer roadmap
+
+Short-term maintainer surface goals:
+
+1. Keep backend/frontend verification commands current
+2. Track user-facing changes in `CHANGELOG.md`
+3. Use issue templates for bugs and feature requests
+4. Cut small, explainable releases instead of silent repo drift

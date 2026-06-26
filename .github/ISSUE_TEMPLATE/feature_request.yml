@@ -1,0 +1,34 @@
+name: Feature request
+description: Propose an improvement with a clear user or operator benefit.
+title: "[Feature] "
+labels:
+  - enhancement
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - backend
+        - frontend
+        - automation
+        - data
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem should this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+    validations:
+      required: true
+  - type: textarea
+    id: verification
+    attributes:
+      label: How would we verify success?
+      description: Include commands, UI checks, or observable outputs if known.
