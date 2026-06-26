@@ -6,11 +6,18 @@ This file follows a simple keep-a-changelog style.
 
 ## Unreleased
 
+### Changed
+
+- Prepare the repository for the next post-`v0.1.0` maintenance cycle
+
+## v0.1.0 - 2026-06-26
+
 ### Added
 
 - Contribution workflow documentation
 - Maintainer release checklist
 - GitHub issue and PR templates
+- CODEOWNERS and pull request expectations for maintainer review
 
 ## 2026-06-25
 
