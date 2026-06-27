@@ -35,6 +35,7 @@ python scripts/daily_weather_update.py
 
 - Update `CHANGELOG.md`
 - Record validation commands that actually passed
+- Confirm `docs/VERIFICATION_MATRIX.md` still matches the commands you ran
 - Link the issue or task that motivated the change
 - Note whether the change affects API consumers, operators, or daily automation
 

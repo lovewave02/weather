@@ -33,6 +33,7 @@ python scripts/daily_weather_update.py
 ## Project Operations
 
 - Contribution guide: [`CONTRIBUTING.md`](CONTRIBUTING.md)
+- Verification matrix: [`docs/VERIFICATION_MATRIX.md`](docs/VERIFICATION_MATRIX.md)
 - Release checklist: [`docs/RELEASE_CHECKLIST.md`](docs/RELEASE_CHECKLIST.md)
 - Changelog: [`CHANGELOG.md`](CHANGELOG.md)
 
@@ -44,3 +45,4 @@ Short-term maintainer surface goals:
 2. Track user-facing changes in `CHANGELOG.md`
 3. Use issue templates for bugs and feature requests
 4. Cut small, explainable releases instead of silent repo drift
+5. Keep public follow-up work anchored to issue `#1` and the verification matrix
