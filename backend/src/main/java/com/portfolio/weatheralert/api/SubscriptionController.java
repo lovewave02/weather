@@ -42,4 +42,9 @@ public class SubscriptionController {
     public SubscriptionResponse disable(@PathVariable UUID subscriptionId) {
         return subscriptionService.disable(subscriptionId);
     }
+
+    @PostMapping("/{subscriptionId}/enable")
+    public SubscriptionResponse enable(@PathVariable UUID subscriptionId) {
+        return subscriptionService.enable(subscriptionId);
+    }
 }

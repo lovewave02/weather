@@ -6,6 +6,7 @@ import {
   createUser,
   createLocation,
   disableSubscription,
+  enableSubscription,
   getCurrentWeather,
   getHealth,
   getHourlyWeather,
@@ -135,7 +136,7 @@ function App() {
   const [subscriptions, setSubscriptions] = useState<SubscriptionResponse[]>([])
   const [subscriptionsHint, setSubscriptionsHint] = useState<string | null>(null)
   const [subscriptionsLoading, setSubscriptionsLoading] = useState(false)
-  const [disablingSubscriptionId, setDisablingSubscriptionId] = useState<string | null>(null)
+  const [updatingSubscriptionId, setUpdatingSubscriptionId] = useState<string | null>(null)
 
   const selectedLocation = useMemo(() => {
     if (!selectedLocationId) return null
@@ -366,7 +367,9 @@ function App() {
       }
       const subscription = await createSubscription(payload)
       setLastSubscription(subscription)
-      setSubscriptionHint(`구독 생성 완료: ${subscriptionLabel(subscription.ruleType, String(subscription.threshold))}`)
+      setSubscriptionHint(
+        `${subscription.enabled ? '구독 저장 완료' : '구독 상태 갱신 완료'}: ${subscriptionLabel(subscription.ruleType, String(subscription.threshold))}`,
+      )
       void refreshAlerts(currentUser.id)
       void refreshSubscriptions(currentUser.id)
     } catch (error) {
@@ -377,7 +380,7 @@ function App() {
   }
 
   async function handleDisableSubscription(subscription: SubscriptionResponse) {
-    setDisablingSubscriptionId(subscription.id)
+    setUpdatingSubscriptionId(subscription.id)
     setSubscriptionsHint(null)
     try {
       const updated = await disableSubscription(subscription.id)
@@ -389,7 +392,24 @@ function App() {
     } catch (error) {
       setSubscriptionsHint(errorMessage(error))
     } finally {
-      setDisablingSubscriptionId(null)
+      setUpdatingSubscriptionId(null)
+    }
+  }
+
+  async function handleEnableSubscription(subscription: SubscriptionResponse) {
+    setUpdatingSubscriptionId(subscription.id)
+    setSubscriptionsHint(null)
+    try {
+      const updated = await enableSubscription(subscription.id)
+      setSubscriptions((prev) => prev.map((item) => (item.id === updated.id ? updated : item)))
+      if (lastSubscription?.id === updated.id) {
+        setLastSubscription(updated)
+      }
+      setSubscriptionHint(`rule 재활성화 완료: ${subscriptionLabel(updated.ruleType, String(updated.threshold))}`)
+    } catch (error) {
+      setSubscriptionsHint(errorMessage(error))
+    } finally {
+      setUpdatingSubscriptionId(null)
     }
   }
 
@@ -743,18 +763,28 @@ function App() {
                         <div className="alertMessage">
                           {subscriptionLabel(subscription.ruleType, String(subscription.threshold))}
                         </div>
-                        {subscription.enabled && (
-                          <div className="row actionRow">
+                        <div className="row actionRow">
+                          {subscription.enabled && (
                             <button
                               className="ghost danger"
                               type="button"
                               onClick={() => void handleDisableSubscription(subscription)}
-                              disabled={disablingSubscriptionId === subscription.id}
+                              disabled={updatingSubscriptionId === subscription.id}
                             >
-                              {disablingSubscriptionId === subscription.id ? 'Disabling…' : 'Disable Rule'}
+                              {updatingSubscriptionId === subscription.id ? 'Updating…' : 'Disable Rule'}
                             </button>
-                          </div>
-                        )}
+                          )}
+                          {!subscription.enabled && (
+                            <button
+                              className="ghost success"
+                              type="button"
+                              onClick={() => void handleEnableSubscription(subscription)}
+                              disabled={updatingSubscriptionId === subscription.id}
+                            >
+                              {updatingSubscriptionId === subscription.id ? 'Updating…' : 'Enable Rule'}
+                            </button>
+                          )}
+                        </div>
                       </div>
                     ))}
                   </div>

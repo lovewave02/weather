@@ -6,6 +6,7 @@ import static org.mockito.BDDMockito.given;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import com.portfolio.weatheralert.domain.AppUser;
@@ -73,16 +74,52 @@ class SubscriptionServiceTest {
         given(appUserRepository.findById(userId)).willReturn(java.util.Optional.of(user));
         given(locationRepository.findById(locationId)).willReturn(java.util.Optional.of(location));
 
-        given(subscriptionRepository.existsByUserIdAndLocationIdAndRuleTypeAndThreshold(
+        Subscription existing = Mockito.mock(Subscription.class);
+        given(existing.isEnabled()).willReturn(true);
+        given(subscriptionRepository.findByUserIdAndLocationIdAndRuleTypeAndThreshold(
                 userId,
                 locationId,
                 RuleType.TEMP_BELOW,
                 20.0
-        )).willReturn(true);
+        )).willReturn(Optional.of(existing));
 
         assertThatThrownBy(() -> service.create(new CreateSubscriptionRequest(userId, locationId, RuleType.TEMP_BELOW, 20.0)))
                 .isInstanceOf(DuplicateResourceException.class)
                 .hasMessageContaining("subscription already exists");
+    }
+
+    @Test
+    void create_reenablesMatchingDisabledRule() {
+        UUID userId = UUID.randomUUID();
+        UUID locationId = UUID.randomUUID();
+        UUID subscriptionId = UUID.randomUUID();
+        AppUser user = Mockito.mock(AppUser.class);
+        Location location = Mockito.mock(Location.class);
+        Subscription existing = Mockito.mock(Subscription.class);
+
+        given(user.getId()).willReturn(userId);
+        given(location.getId()).willReturn(locationId);
+        given(existing.getId()).willReturn(subscriptionId);
+        given(existing.getUser()).willReturn(user);
+        given(existing.getLocation()).willReturn(location);
+        given(existing.getRuleType()).willReturn(RuleType.TEMP_BELOW);
+        given(existing.getThreshold()).willReturn(20.0);
+        given(existing.isEnabled()).willReturn(false, true);
+
+        given(appUserRepository.findById(userId)).willReturn(Optional.of(user));
+        given(locationRepository.findById(locationId)).willReturn(Optional.of(location));
+        given(subscriptionRepository.findByUserIdAndLocationIdAndRuleTypeAndThreshold(
+                userId,
+                locationId,
+                RuleType.TEMP_BELOW,
+                20.0
+        )).willReturn(Optional.of(existing));
+
+        SubscriptionResponse response = service.create(new CreateSubscriptionRequest(userId, locationId, RuleType.TEMP_BELOW, 20.0));
+
+        assertThat(response.id()).isEqualTo(subscriptionId);
+        assertThat(response.enabled()).isTrue();
+        Mockito.verify(existing).enable();
     }
 
     @Test
@@ -112,5 +149,34 @@ class SubscriptionServiceTest {
         assertThat(response.id()).isEqualTo(subscriptionId);
         assertThat(response.enabled()).isFalse();
         Mockito.verify(subscription).disable();
+    }
+
+    @Test
+    void enable_marksSubscriptionEnabled() {
+        UUID userId = UUID.randomUUID();
+        UUID locationId = UUID.randomUUID();
+        UUID subscriptionId = UUID.randomUUID();
+
+        AppUser user = Mockito.mock(AppUser.class);
+        given(user.getId()).willReturn(userId);
+
+        Location location = Mockito.mock(Location.class);
+        given(location.getId()).willReturn(locationId);
+
+        Subscription subscription = Mockito.mock(Subscription.class);
+        given(subscription.getId()).willReturn(subscriptionId);
+        given(subscription.getUser()).willReturn(user);
+        given(subscription.getLocation()).willReturn(location);
+        given(subscription.getRuleType()).willReturn(RuleType.TEMP_BELOW);
+        given(subscription.getThreshold()).willReturn(20.0);
+        given(subscription.isEnabled()).willReturn(true);
+
+        given(subscriptionRepository.findById(subscriptionId)).willReturn(Optional.of(subscription));
+
+        SubscriptionResponse response = service.enable(subscriptionId);
+
+        assertThat(response.id()).isEqualTo(subscriptionId);
+        assertThat(response.enabled()).isTrue();
+        Mockito.verify(subscription).enable();
     }
 }

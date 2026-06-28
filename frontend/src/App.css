@@ -521,6 +521,11 @@ select:focus {
   color: #ffd7d1;
 }
 
+.success {
+  border-color: rgba(46, 204, 113, 0.45);
+  color: #d7ffe4;
+}
+
 .cardTitle {
   font-weight: 800;
   font-size: 18px;

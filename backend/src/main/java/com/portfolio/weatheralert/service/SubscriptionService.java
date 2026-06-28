@@ -40,15 +40,21 @@ public class SubscriptionService {
         Location location = locationRepository.findById(locationId)
                 .orElseThrow(() -> new EntityNotFoundException("location not found: " + locationId));
 
-        if (subscriptionRepository.existsByUserIdAndLocationIdAndRuleTypeAndThreshold(
+        Subscription existing = subscriptionRepository.findByUserIdAndLocationIdAndRuleTypeAndThreshold(
                 userId,
                 locationId,
                 request.ruleType(),
                 request.threshold()
-        )) {
-            throw new DuplicateResourceException(
-                    "subscription already exists for user/location/rule/threshold"
-            );
+        ).orElse(null);
+
+        if (existing != null) {
+            if (existing.isEnabled()) {
+                throw new DuplicateResourceException(
+                        "subscription already exists for user/location/rule/threshold"
+                );
+            }
+            existing.enable();
+            return SubscriptionResponse.from(existing);
         }
 
         Subscription saved = subscriptionRepository.save(
@@ -69,6 +75,14 @@ public class SubscriptionService {
         Subscription subscription = subscriptionRepository.findById(subscriptionId)
                 .orElseThrow(() -> new EntityNotFoundException("subscription not found: " + subscriptionId));
         subscription.disable();
+        return SubscriptionResponse.from(subscription);
+    }
+
+    @Transactional
+    public SubscriptionResponse enable(UUID subscriptionId) {
+        Subscription subscription = subscriptionRepository.findById(subscriptionId)
+                .orElseThrow(() -> new EntityNotFoundException("subscription not found: " + subscriptionId));
+        subscription.enable();
         return SubscriptionResponse.from(subscription);
     }
 }
