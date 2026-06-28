@@ -19,11 +19,26 @@ Create a maintainer-tracked follow-up issue that makes the next public operation
 2. keep the local H2-based verification path free of false scheduled `shedlock` noise
 3. collect the first round of public cleanup tasks after `v0.1.0`
 
+## Progress
+
+Completed on 2026-06-28:
+
+- [x] documented the expected local verification matrix for backend, frontend, and daily automation
+- [x] removed the false H2-backed scheduled `shedlock` noise from test-profile verification by gating scheduling infrastructure behind `weather.scheduling.enabled`
+- [x] aligned release-facing maintainer docs with the real backend verification command (`mvn test`) so public maintainer guidance matches the current repository state
+
+Still open:
+
+- [ ] collect the next public cleanup task that can create stronger user or adoption signals beyond maintainer-surface hygiene
+
 Current observed note:
 
 - Rechecked on 2026-06-28: `mvn test` passes (`6 tests, 0 failures`) and the
   test profile now disables scheduling infrastructure cleanly, so the prior
   H2-backed `SHEDLOCK` table noise is no longer emitted during `SmokeTest`.
+- Rechecked on 2026-06-28: release-facing maintainer docs now point to `mvn test`
+  rather than `./mvnw test`, which matches the current repository because
+  `backend/mvnw` is not present.
 
 This issue should act as the public anchor for the next small maintenance changes instead of keeping the backlog private.
 
@@ -34,3 +49,4 @@ This issue should act as the public anchor for the next small maintenance change
 - the issue contains concrete follow-up checks instead of vague roadmap language
 - the next maintainer-facing patch can reference this issue directly
 - the repository keeps the same checklist in `docs/VERIFICATION_MATRIX.md`
+- the remaining open item is a real public follow-up, not another stale docs mismatch
