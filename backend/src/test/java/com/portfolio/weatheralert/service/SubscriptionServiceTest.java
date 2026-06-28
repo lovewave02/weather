@@ -8,6 +8,8 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
+import com.portfolio.weatheralert.domain.AppUser;
+import com.portfolio.weatheralert.domain.Location;
 import com.portfolio.weatheralert.domain.RuleType;
 import com.portfolio.weatheralert.domain.Subscription;
 import com.portfolio.weatheralert.repository.AppUserRepository;
@@ -65,8 +67,8 @@ class SubscriptionServiceTest {
     void create_rejectsDuplicateRule() {
         UUID userId = UUID.randomUUID();
         UUID locationId = UUID.randomUUID();
-        var user = Mockito.mock(com.portfolio.weatheralert.domain.AppUser.class);
-        var location = Mockito.mock(com.portfolio.weatheralert.domain.Location.class);
+        var user = Mockito.mock(AppUser.class);
+        var location = Mockito.mock(Location.class);
 
         given(appUserRepository.findById(userId)).willReturn(java.util.Optional.of(user));
         given(locationRepository.findById(locationId)).willReturn(java.util.Optional.of(location));
@@ -81,5 +83,34 @@ class SubscriptionServiceTest {
         assertThatThrownBy(() -> service.create(new CreateSubscriptionRequest(userId, locationId, RuleType.TEMP_BELOW, 20.0)))
                 .isInstanceOf(DuplicateResourceException.class)
                 .hasMessageContaining("subscription already exists");
+    }
+
+    @Test
+    void disable_marksSubscriptionDisabled() {
+        UUID userId = UUID.randomUUID();
+        UUID locationId = UUID.randomUUID();
+        UUID subscriptionId = UUID.randomUUID();
+
+        AppUser user = Mockito.mock(AppUser.class);
+        given(user.getId()).willReturn(userId);
+
+        Location location = Mockito.mock(Location.class);
+        given(location.getId()).willReturn(locationId);
+
+        Subscription subscription = Mockito.mock(Subscription.class);
+        given(subscription.getId()).willReturn(subscriptionId);
+        given(subscription.getUser()).willReturn(user);
+        given(subscription.getLocation()).willReturn(location);
+        given(subscription.getRuleType()).willReturn(RuleType.TEMP_BELOW);
+        given(subscription.getThreshold()).willReturn(20.0);
+        given(subscription.isEnabled()).willReturn(false);
+
+        given(subscriptionRepository.findById(subscriptionId)).willReturn(java.util.Optional.of(subscription));
+
+        SubscriptionResponse response = service.disable(subscriptionId);
+
+        assertThat(response.id()).isEqualTo(subscriptionId);
+        assertThat(response.enabled()).isFalse();
+        Mockito.verify(subscription).disable();
     }
 }

@@ -5,6 +5,7 @@ import {
   createSubscription,
   createUser,
   createLocation,
+  disableSubscription,
   getCurrentWeather,
   getHealth,
   getHourlyWeather,
@@ -134,6 +135,7 @@ function App() {
   const [subscriptions, setSubscriptions] = useState<SubscriptionResponse[]>([])
   const [subscriptionsHint, setSubscriptionsHint] = useState<string | null>(null)
   const [subscriptionsLoading, setSubscriptionsLoading] = useState(false)
+  const [disablingSubscriptionId, setDisablingSubscriptionId] = useState<string | null>(null)
 
   const selectedLocation = useMemo(() => {
     if (!selectedLocationId) return null
@@ -371,6 +373,23 @@ function App() {
       setSubscriptionHint(errorMessage(error))
     } finally {
       setCreatingSubscription(false)
+    }
+  }
+
+  async function handleDisableSubscription(subscription: SubscriptionResponse) {
+    setDisablingSubscriptionId(subscription.id)
+    setSubscriptionsHint(null)
+    try {
+      const updated = await disableSubscription(subscription.id)
+      setSubscriptions((prev) => prev.map((item) => (item.id === updated.id ? updated : item)))
+      if (lastSubscription?.id === updated.id) {
+        setLastSubscription(updated)
+      }
+      setSubscriptionHint(`rule 비활성화 완료: ${subscriptionLabel(updated.ruleType, String(updated.threshold))}`)
+    } catch (error) {
+      setSubscriptionsHint(errorMessage(error))
+    } finally {
+      setDisablingSubscriptionId(null)
     }
   }
 
@@ -724,6 +743,18 @@ function App() {
                         <div className="alertMessage">
                           {subscriptionLabel(subscription.ruleType, String(subscription.threshold))}
                         </div>
+                        {subscription.enabled && (
+                          <div className="row actionRow">
+                            <button
+                              className="ghost danger"
+                              type="button"
+                              onClick={() => void handleDisableSubscription(subscription)}
+                              disabled={disablingSubscriptionId === subscription.id}
+                            >
+                              {disablingSubscriptionId === subscription.id ? 'Disabling…' : 'Disable Rule'}
+                            </button>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>

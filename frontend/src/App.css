@@ -512,6 +512,15 @@ select:focus {
   word-break: break-word;
 }
 
+.actionRow {
+  margin-top: 10px;
+}
+
+.danger {
+  border-color: rgba(231, 76, 60, 0.45);
+  color: #ffd7d1;
+}
+
 .cardTitle {
   font-weight: 800;
   font-size: 18px;

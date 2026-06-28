@@ -194,6 +194,12 @@ export async function createSubscription(payload: CreateSubscriptionRequest): Pr
   })
 }
 
+export async function disableSubscription(subscriptionId: string): Promise<SubscriptionResponse> {
+  return request<SubscriptionResponse>(`/api/v1/subscriptions/${subscriptionId}/disable`, {
+    method: 'POST',
+  })
+}
+
 export async function listSubscriptions(userId: string): Promise<SubscriptionResponse[]> {
   const query = new URLSearchParams({ userId })
   return request<SubscriptionResponse[]>(`/api/v1/subscriptions?${query.toString()}`)

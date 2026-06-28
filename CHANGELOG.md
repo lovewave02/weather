@@ -15,6 +15,8 @@ This file follows a simple keep-a-changelog style.
   current saved rules instead of forcing a fresh-user-only flow
 - Remember the last alert email in the browser and auto-reconnect that user
   after a refresh so the alert flow keeps its working context across visits
+- Let the dashboard disable an existing alert rule so a user can stop a saved
+  notification without deleting the rest of the alert history
 - Return specific duplicate-create conflict messages for users, locations, and
   alert rules instead of a generic `conflict` response
 - Return ingest run summaries from the manual weather refresh API and surface

@@ -31,6 +31,7 @@ Completed on 2026-06-28:
 - [x] surface the alert flow in the dashboard so a user can create an alert user, add a rule for the selected city, and inspect recent alert events after ingest
 - [x] let the dashboard reconnect an existing alert user by email and reload the current saved rules so the alert flow survives a fresh session
 - [x] remember the last alert email in the browser and auto-reconnect that user after refresh so the alert flow keeps its working context across visits
+- [x] let the dashboard disable an existing alert rule so revisit users can stop a saved notification without rebuilding their whole alert setup
 - [x] return specific duplicate-create conflict details for users, locations, and alert rules so failed actions explain what already exists
 
 Still open:
@@ -71,6 +72,10 @@ Current observed note:
   email in browser storage and auto-reconnects that user after refresh when the
   account still exists, so the alert flow no longer drops back to a manual
   re-entry step between visits. Frontend `npm run build` still passed.
+- Rechecked on 2026-06-28: alert rules can now be disabled from the dashboard
+  through a small backend action endpoint, so revisit users can turn off a
+  saved rule without recreating their whole alert setup. Backend verification
+  passed with `17 tests, 0 failures` and frontend `npm run build` also passed.
 - Rechecked on 2026-06-28: duplicate creates no longer collapse into a generic
   `conflict` detail; the backend now returns specific messages for duplicate
   users, duplicate coordinates, and duplicate alert rules. Backend verification

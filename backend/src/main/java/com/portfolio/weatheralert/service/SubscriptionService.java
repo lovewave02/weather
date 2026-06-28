@@ -63,4 +63,12 @@ public class SubscriptionService {
                 .map(SubscriptionResponse::from)
                 .toList();
     }
+
+    @Transactional
+    public SubscriptionResponse disable(UUID subscriptionId) {
+        Subscription subscription = subscriptionRepository.findById(subscriptionId)
+                .orElseThrow(() -> new EntityNotFoundException("subscription not found: " + subscriptionId));
+        subscription.disable();
+        return SubscriptionResponse.from(subscription);
+    }
 }
