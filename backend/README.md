@@ -92,10 +92,15 @@ erDiagram
 ## API 목록(초안)
 
 - `POST /api/v1/users` 유저 생성
+- `GET /api/v1/users/by-email` 기존 유저 조회
 - `POST /api/v1/locations` 지역 생성
 - `GET /api/v1/locations` 지역 목록
 - `GET /api/v1/locations/{locationId}/weather/current` 현재 날씨 조회(캐시)
 - `POST /api/v1/subscriptions` 구독/조건 등록
+- `GET /api/v1/subscriptions?userId=...` 유저의 현재 rule 목록
+- `POST /api/v1/subscriptions/{subscriptionId}/disable` rule 비활성화
+- `POST /api/v1/subscriptions/{subscriptionId}/enable` rule 재활성화
+- `POST /api/v1/ingest/run` 수동 ingest 실행 및 요약 확인
 - `GET /api/v1/users/{userId}/alerts` 알림 이벤트 조회
 
 ## 로컬 실행
@@ -105,6 +110,8 @@ erDiagram
 - `docker compose up -d --build`
 
 Swagger UI: `http://localhost:8080/swagger-ui/index.html`
+
+빠른 체험 순서는 저장소 루트의 [`docs/ALERT_FLOW_QUICKSTART.md`](../docs/ALERT_FLOW_QUICKSTART.md)를 참고한다.
 
 ### 2) 인프라만 띄우고 로컬 실행(선택)
 

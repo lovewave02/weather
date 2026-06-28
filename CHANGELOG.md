@@ -19,6 +19,8 @@ This file follows a simple keep-a-changelog style.
   notification without deleting the rest of the alert history
 - Let the dashboard re-enable a disabled alert rule, and treat a matching
   create action as a reactivation instead of a dead-end duplicate conflict
+- Add a copy-paste alert quickstart so a new user can try the current
+  dashboard and API flow without reading the whole repository first
 - Return specific duplicate-create conflict messages for users, locations, and
   alert rules instead of a generic `conflict` response
 - Return ingest run summaries from the manual weather refresh API and surface

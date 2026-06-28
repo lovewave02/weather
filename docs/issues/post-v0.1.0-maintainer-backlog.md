@@ -33,6 +33,7 @@ Completed on 2026-06-28:
 - [x] remember the last alert email in the browser and auto-reconnect that user after refresh so the alert flow keeps its working context across visits
 - [x] let the dashboard disable an existing alert rule so revisit users can stop a saved notification without rebuilding their whole alert setup
 - [x] let the dashboard re-enable a disabled alert rule and treat the same create action as reactivation instead of leaving disabled duplicates stranded
+- [x] publish a copy-paste quickstart for the alert flow so a new user can try the current dashboard and API path without reading the whole repo first
 - [x] return specific duplicate-create conflict details for users, locations, and alert rules so failed actions explain what already exists
 
 Still open:
@@ -81,6 +82,11 @@ Current observed note:
   dashboard, and the same create action reactivates a matching disabled rule
   instead of failing with a dead-end duplicate conflict. Backend verification
   passed with `19 tests, 0 failures` and frontend `npm run build` also passed.
+- Rechecked on 2026-06-28: the repository now also ships a copy-paste
+  onboarding path in `docs/ALERT_FLOW_QUICKSTART.md` that covers the current
+  UI and API alert lifecycle end-to-end, including create/load user, create
+  rule, disable, re-enable, ingest, and alert inspection. Frontend `npm run
+  build` still passed after the documentation refresh.
 - Rechecked on 2026-06-28: duplicate creates no longer collapse into a generic
   `conflict` detail; the backend now returns specific messages for duplicate
   users, duplicate coordinates, and duplicate alert rules. Backend verification
