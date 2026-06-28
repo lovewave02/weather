@@ -14,7 +14,7 @@ Use this checklist before cutting a public release or announcing a significant u
 
 ```bash
 cd backend
-./mvnw test
+mvn test
 ```
 
 ### Frontend
