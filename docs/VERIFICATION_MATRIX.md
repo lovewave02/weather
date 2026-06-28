@@ -68,19 +68,20 @@ What this covers:
 These are the first post-`v0.1.0` maintainer checks to keep visible:
 
 1. Keep the backend/frontend verification commands current as the repo changes.
-2. Reconfirm the local verification story around scheduled `shedlock` behavior.
+2. Keep local test-profile scheduling deterministic so backend verification does
+   not emit false `shedlock` errors.
 3. Tie future cleanup work back to a public issue or release note instead of
    keeping it private.
 
-### Observed on 2026-06-27
+### Observed on 2026-06-28
 
 - `mvn test` finished with `BUILD SUCCESS` and `Tests run: 6, Failures: 0,
   Errors: 0`.
-- The same run emitted scheduled-task error logs because local H2 execution did
-  not have a `shedlock` table available for the scheduler path.
+- The test profile now disables the scheduling infrastructure through
+  `weather.scheduling.enabled=false`, so the previous H2/ShedLock noise no
+  longer appears during `SmokeTest`.
 
-Treat that as a known follow-up item, not as a release blocker for doc-only or
-frontend-only changes.
+Treat future scheduler noise in tests as a regression.
 
 ## Maintainer note
 

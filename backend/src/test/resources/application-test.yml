@@ -14,3 +14,7 @@ spring:
   task:
     scheduling:
       enabled: false
+
+weather:
+  scheduling:
+    enabled: false

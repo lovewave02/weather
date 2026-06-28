@@ -9,6 +9,7 @@ This file follows a simple keep-a-changelog style.
 ### Changed
 
 - Prepare the repository for the next post-`v0.1.0` maintenance cycle
+- Gate backend scheduling and ShedLock behind `weather.scheduling.enabled` so test-profile verification no longer emits false scheduler errors
 
 ## v0.1.0 - 2026-06-26
 

@@ -16,13 +16,14 @@ Without at least one visible maintainer backlog item, the repo still looks quiet
 Create a maintainer-tracked follow-up issue that makes the next public operations work explicit:
 
 1. document the expected local verification matrix for backend, frontend, and daily automation
-2. confirm the test/runtime gap around scheduled `shedlock` behavior in local H2-based verification
+2. keep the local H2-based verification path free of false scheduled `shedlock` noise
 3. collect the first round of public cleanup tasks after `v0.1.0`
 
 Current observed note:
 
-- `mvn test` passes (`6 tests, 0 failures`) but local scheduled-task logs still
-  show `SHEDLOCK` table lookup errors during H2-backed execution.
+- Rechecked on 2026-06-28: `mvn test` passes (`6 tests, 0 failures`) and the
+  test profile now disables scheduling infrastructure cleanly, so the prior
+  H2-backed `SHEDLOCK` table noise is no longer emitted during `SmokeTest`.
 
 This issue should act as the public anchor for the next small maintenance changes instead of keeping the backlog private.
 

@@ -29,6 +29,8 @@ management:
         include: health,info,metrics,prometheus
 
 weather:
+  scheduling:
+    enabled: true
   provider:
     base-url: https://api.open-meteo.com
     connect-timeout: 3s
