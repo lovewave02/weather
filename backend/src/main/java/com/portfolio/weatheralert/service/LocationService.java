@@ -20,6 +20,12 @@ public class LocationService {
 
     @Transactional
     public LocationResponse create(CreateLocationRequest request) {
+        locationRepository.findByLatitudeAndLongitude(request.latitude(), request.longitude())
+                .ifPresent(existing -> {
+                    throw new DuplicateResourceException(
+                            "location already exists for coordinates: " + request.latitude() + ", " + request.longitude()
+                    );
+                });
         Location saved = locationRepository.save(new Location(request.name(), request.latitude(), request.longitude()));
         return LocationResponse.from(saved);
     }
@@ -31,4 +37,3 @@ public class LocationService {
                 .toList();
     }
 }
-

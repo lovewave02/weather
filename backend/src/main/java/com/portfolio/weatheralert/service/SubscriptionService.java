@@ -40,6 +40,17 @@ public class SubscriptionService {
         Location location = locationRepository.findById(locationId)
                 .orElseThrow(() -> new EntityNotFoundException("location not found: " + locationId));
 
+        if (subscriptionRepository.existsByUserIdAndLocationIdAndRuleTypeAndThreshold(
+                userId,
+                locationId,
+                request.ruleType(),
+                request.threshold()
+        )) {
+            throw new DuplicateResourceException(
+                    "subscription already exists for user/location/rule/threshold"
+            );
+        }
+
         Subscription saved = subscriptionRepository.save(
                 new Subscription(user, location, request.ruleType(), request.threshold())
         );

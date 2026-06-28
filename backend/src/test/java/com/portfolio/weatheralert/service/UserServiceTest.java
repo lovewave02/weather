@@ -10,6 +10,7 @@ import java.util.UUID;
 
 import com.portfolio.weatheralert.domain.AppUser;
 import com.portfolio.weatheralert.repository.AppUserRepository;
+import com.portfolio.weatheralert.service.dto.CreateUserRequest;
 import com.portfolio.weatheralert.service.dto.UserResponse;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -42,5 +43,15 @@ class UserServiceTest {
         assertThatThrownBy(() -> service.findByEmail("missing@example.com"))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining("missing@example.com");
+    }
+
+    @Test
+    void create_rejectsDuplicateEmail() {
+        AppUser existing = Mockito.mock(AppUser.class);
+        given(appUserRepository.findByEmail("alerts@example.com")).willReturn(Optional.of(existing));
+
+        assertThatThrownBy(() -> service.create(new CreateUserRequest("alerts@example.com")))
+                .isInstanceOf(DuplicateResourceException.class)
+                .hasMessageContaining("user already exists");
     }
 }

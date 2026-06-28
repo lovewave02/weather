@@ -13,6 +13,8 @@ This file follows a simple keep-a-changelog style.
   add a rule for the selected city, and inspect recent alert events after ingest
 - Let the dashboard reconnect an existing alert user by email and reload the
   current saved rules instead of forcing a fresh-user-only flow
+- Return specific duplicate-create conflict messages for users, locations, and
+  alert rules instead of a generic `conflict` response
 - Return ingest run summaries from the manual weather refresh API and surface
   the counts in the dashboard so operators can see what a run actually did
 - Reject impossible latitude/longitude values at the location API boundary and

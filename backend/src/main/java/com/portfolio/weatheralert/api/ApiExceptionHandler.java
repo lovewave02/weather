@@ -1,5 +1,6 @@
 package com.portfolio.weatheralert.api;
 
+import com.portfolio.weatheralert.service.DuplicateResourceException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import com.portfolio.weatheralert.weather.WeatherProviderUnavailableException;
@@ -25,6 +26,13 @@ public class ApiExceptionHandler {
     ProblemDetail handleConflict(DataIntegrityViolationException exception) {
         ProblemDetail detail = ProblemDetail.forStatus(HttpStatus.CONFLICT);
         detail.setDetail("conflict");
+        return detail;
+    }
+
+    @ExceptionHandler(DuplicateResourceException.class)
+    ProblemDetail handleDuplicate(DuplicateResourceException exception) {
+        ProblemDetail detail = ProblemDetail.forStatus(HttpStatus.CONFLICT);
+        detail.setDetail(exception.getMessage());
         return detail;
     }
 

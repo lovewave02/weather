@@ -21,6 +21,10 @@ public class UserService {
 
     @Transactional
     public UserResponse create(CreateUserRequest request) {
+        appUserRepository.findByEmail(request.email())
+                .ifPresent(existing -> {
+                    throw new DuplicateResourceException("user already exists for email: " + request.email());
+                });
         AppUser saved = appUserRepository.save(new AppUser(request.email()));
         return UserResponse.from(saved);
     }

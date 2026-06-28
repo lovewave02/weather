@@ -1,6 +1,7 @@
 package com.portfolio.weatheralert.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 
 import java.time.Instant;
@@ -12,6 +13,7 @@ import com.portfolio.weatheralert.domain.Subscription;
 import com.portfolio.weatheralert.repository.AppUserRepository;
 import com.portfolio.weatheralert.repository.LocationRepository;
 import com.portfolio.weatheralert.repository.SubscriptionRepository;
+import com.portfolio.weatheralert.service.dto.CreateSubscriptionRequest;
 import com.portfolio.weatheralert.service.dto.SubscriptionResponse;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -57,5 +59,27 @@ class SubscriptionServiceTest {
         assertThat(responses.get(0).userId()).isEqualTo(userId);
         assertThat(responses.get(0).locationId()).isEqualTo(locationId);
         assertThat(responses.get(0).ruleType()).isEqualTo(RuleType.TEMP_ABOVE);
+    }
+
+    @Test
+    void create_rejectsDuplicateRule() {
+        UUID userId = UUID.randomUUID();
+        UUID locationId = UUID.randomUUID();
+        var user = Mockito.mock(com.portfolio.weatheralert.domain.AppUser.class);
+        var location = Mockito.mock(com.portfolio.weatheralert.domain.Location.class);
+
+        given(appUserRepository.findById(userId)).willReturn(java.util.Optional.of(user));
+        given(locationRepository.findById(locationId)).willReturn(java.util.Optional.of(location));
+
+        given(subscriptionRepository.existsByUserIdAndLocationIdAndRuleTypeAndThreshold(
+                userId,
+                locationId,
+                RuleType.TEMP_BELOW,
+                20.0
+        )).willReturn(true);
+
+        assertThatThrownBy(() -> service.create(new CreateSubscriptionRequest(userId, locationId, RuleType.TEMP_BELOW, 20.0)))
+                .isInstanceOf(DuplicateResourceException.class)
+                .hasMessageContaining("subscription already exists");
     }
 }
