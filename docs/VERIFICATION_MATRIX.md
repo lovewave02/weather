@@ -65,9 +65,10 @@ python scripts/alert_flow_smoke.py
 What this covers:
 
 - backend health readiness
-- location/user/rule lookup or creation path
+- fresh location plus user/rule lookup or creation path
 - disable/enable rule lifecycle
-- manual ingest plus alert listing summary
+- manual ingest plus alert listing summary, including one real alert event on
+  the default fresh-location path
 
 ## When to run which checks
 
@@ -105,7 +106,8 @@ These are the first post-`v0.1.0` maintainer checks to keep visible:
   alert email, disable, re-enable, ingest, and inspect alerts.
 - The repository now also has a repeatable API smoke path in
   `scripts/alert_flow_smoke.py`; keep it aligned with the same alert lifecycle
-  so maintainers can verify the flow without a browser session.
+  so maintainers can verify the flow without a browser session and still prove
+  one real alert event on the default path.
 
 Treat future scheduler noise in tests as a regression.
 

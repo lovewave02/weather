@@ -50,7 +50,9 @@ python scripts/alert_flow_smoke.py
 The script waits for backend health, ensures one location and one user exist,
 creates or reuses a matching rule, exercises disable/enable, runs ingest, and
 prints a JSON summary with the latest alert count. Its default threshold is
-chosen to make alert creation likely for the selected rule type.
+chosen to make alert creation likely for the selected rule type. By default it
+creates a fresh smoke location so the same run can also prove `alertsCreated`
+and a real alert event without depending on an older snapshot.
 
 Create a user:
 

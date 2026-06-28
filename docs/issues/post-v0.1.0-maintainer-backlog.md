@@ -93,6 +93,10 @@ Current observed note:
   location and one user exist, creates or reuses a matching rule, exercises
   disable/enable, runs ingest, and prints a JSON summary of the resulting
   alert state so maintainers can verify the same flow without the browser UI.
+- Rechecked later on 2026-06-28: the smoke path now defaults to a fresh smoke
+  location plus an alert-friendly rule, so the same run also proves
+  `alertsCreated=1` and at least one real alert event instead of stopping at a
+  lifecycle-only ingest summary.
 - Rechecked on 2026-06-28: `docs/VERIFICATION_MATRIX.md` now also reflects the
   current backend proof (`19 tests, 0 failures`) and the real alert lifecycle
   users see today, including reconnecting with the last alert email before

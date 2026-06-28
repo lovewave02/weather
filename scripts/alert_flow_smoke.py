@@ -5,6 +5,7 @@ import argparse
 import json
 import sys
 import time
+import uuid
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from typing import Any
@@ -13,7 +14,7 @@ from urllib.parse import urlencode, urljoin
 from urllib.request import Request, urlopen
 
 DEFAULT_LOCATION = {
-    "name": "Seoul",
+    "name": "Smoke",
     "latitude": 37.5665,
     "longitude": 126.9780,
 }
@@ -85,6 +86,17 @@ def wait_for_health(client: Client, retries: int, interval: float) -> dict[str, 
     raise ApiFailure(f"backend health check did not become ready: {last_error}")
 
 
+def build_location_payload(name: str) -> dict[str, Any]:
+    seed = int.from_bytes(name.encode("utf-8"), "little", signed=False)
+    lat_offset = ((seed % 700) + 1) / 1_000_000
+    lon_offset = (((seed // 700) % 700) + 1) / 1_000_000
+    return {
+        "name": name,
+        "latitude": DEFAULT_LOCATION["latitude"] + lat_offset,
+        "longitude": DEFAULT_LOCATION["longitude"] + lon_offset,
+    }
+
+
 def ensure_location(client: Client, requested_name: str) -> dict[str, Any]:
     locations = client.request("GET", "/api/v1/locations")
     requested = requested_name.strip().lower()
@@ -93,10 +105,7 @@ def ensure_location(client: Client, requested_name: str) -> dict[str, Any]:
         if str(location.get("name", "")).strip().lower() == requested:
             return location
 
-    if locations:
-        return locations[0]
-
-    created = client.request("POST", "/api/v1/locations", body=DEFAULT_LOCATION)
+    created = client.request("POST", "/api/v1/locations", body=build_location_payload(requested_name))
     return created
 
 
@@ -126,6 +135,10 @@ def default_threshold_for_rule(rule_type: str) -> float:
     if rule_type == "TEMP_ABOVE":
         return -100.0
     return 0.0
+
+
+def default_rule_type() -> str:
+    return "TEMP_ABOVE"
 
 
 def ensure_subscription(
@@ -162,8 +175,8 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Run a local smoke test for the weather alert flow.")
     parser.add_argument("--base-url", default="http://localhost:8080", help="Backend base URL.")
     parser.add_argument("--email", help="Email to use for the smoke user.")
-    parser.add_argument("--location-name", default="Seoul", help="Preferred location name to exercise.")
-    parser.add_argument("--rule-type", default="TEMP_BELOW", choices=["TEMP_BELOW", "TEMP_ABOVE", "PRECIP_ABOVE"])
+    parser.add_argument("--location-name", help="Location name to exercise. Defaults to a fresh smoke location.")
+    parser.add_argument("--rule-type", default=default_rule_type(), choices=["TEMP_BELOW", "TEMP_ABOVE", "PRECIP_ABOVE"])
     parser.add_argument("--threshold", type=float, help="Threshold to apply. Defaults to an alert-friendly value for the selected rule type.")
     parser.add_argument("--skip-toggle", action="store_true", help="Skip disable/enable lifecycle exercise.")
     parser.add_argument("--skip-ingest", action="store_true", help="Skip the ingest + alert listing step.")
@@ -174,13 +187,14 @@ def main() -> int:
 
     timestamp = datetime.now(UTC).strftime("%Y%m%d%H%M%S")
     email = args.email or f"alerts-smoke-{timestamp}@example.com"
+    location_name = args.location_name or f"{DEFAULT_LOCATION['name']}-{uuid.uuid4().hex[:8]}"
     threshold = args.threshold if args.threshold is not None else default_threshold_for_rule(args.rule_type)
 
     client = Client(base_url=args.base_url.rstrip("/") + "/", timeout=args.timeout)
 
     try:
         health = wait_for_health(client, retries=args.health_retries, interval=args.health_interval)
-        location = ensure_location(client, args.location_name)
+        location = ensure_location(client, location_name)
         user = ensure_user(client, email)
         subscription, subscription_status = ensure_subscription(
             client,
