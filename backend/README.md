@@ -112,6 +112,7 @@ erDiagram
 Swagger UI: `http://localhost:8080/swagger-ui/index.html`
 
 빠른 체험 순서는 저장소 루트의 [`docs/ALERT_FLOW_QUICKSTART.md`](../docs/ALERT_FLOW_QUICKSTART.md)를 참고한다.
+반복 가능한 API smoke path는 저장소 루트에서 `python scripts/alert_flow_smoke.py`로 실행할 수 있다.
 
 ### 2) 인프라만 띄우고 로컬 실행(선택)
 

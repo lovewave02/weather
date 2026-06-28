@@ -21,6 +21,8 @@ This file follows a simple keep-a-changelog style.
   create action as a reactivation instead of a dead-end duplicate conflict
 - Add a copy-paste alert quickstart so a new user can try the current
   dashboard and API flow without reading the whole repository first
+- Add a repeatable alert-flow smoke script so maintainers can verify the
+  current API lifecycle and ingest path without clicking through the UI
 - Return specific duplicate-create conflict messages for users, locations, and
   alert rules instead of a generic `conflict` response
 - Return ingest run summaries from the manual weather refresh API and surface

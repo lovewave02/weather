@@ -41,6 +41,17 @@ npm run dev
 
 These examples assume the backend runs on `http://localhost:8080`.
 
+If you want one repeatable command instead of individual `curl` calls, run:
+
+```bash
+python scripts/alert_flow_smoke.py
+```
+
+The script waits for backend health, ensures one location and one user exist,
+creates or reuses a matching rule, exercises disable/enable, runs ingest, and
+prints a JSON summary with the latest alert count. Its default threshold is
+chosen to make alert creation likely for the selected rule type.
+
 Create a user:
 
 ```bash
@@ -111,6 +122,13 @@ For quickstart changes, keep the public proof lightweight:
 ```bash
 cd frontend
 npm run build
+```
+
+For smoke-script changes, also run:
+
+```bash
+python scripts/alert_flow_smoke.py --skip-ingest
+python -m py_compile scripts/alert_flow_smoke.py
 ```
 
 When the quickstart relies on backend behavior that changed in the same bundle,

@@ -43,6 +43,7 @@ python scripts/daily_weather_update.py
 - Verification matrix: [`docs/VERIFICATION_MATRIX.md`](docs/VERIFICATION_MATRIX.md)
 - Release checklist: [`docs/RELEASE_CHECKLIST.md`](docs/RELEASE_CHECKLIST.md)
 - Changelog: [`CHANGELOG.md`](CHANGELOG.md)
+- Smoke test script: `python scripts/alert_flow_smoke.py`
 
 ## Maintainer roadmap
 
@@ -54,3 +55,4 @@ Short-term maintainer surface goals:
 4. Cut small, explainable releases instead of silent repo drift
 5. Keep public follow-up work anchored to issue `#1` and the verification matrix
 6. Keep one copy-paste quickstart current so outsiders can try the alert flow quickly
+7. Keep one repeatable smoke script current so maintainers and outsiders can verify the alert lifecycle without clicking through the UI

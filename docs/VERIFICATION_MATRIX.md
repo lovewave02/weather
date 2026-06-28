@@ -54,6 +54,21 @@ What this covers:
 - historical file write path
 - daily log append flow
 
+### Alert flow smoke
+
+Run from the repository root after the backend is up:
+
+```bash
+python scripts/alert_flow_smoke.py
+```
+
+What this covers:
+
+- backend health readiness
+- location/user/rule lookup or creation path
+- disable/enable rule lifecycle
+- manual ingest plus alert listing summary
+
 ## When to run which checks
 
 | Change type | Minimum verification |
@@ -61,6 +76,7 @@ What this covers:
 | Backend API/domain change | `mvn test` |
 | Frontend UI/data-fetch change | `npm install && npm run build` |
 | Daily automation/script change | `python scripts/daily_weather_update.py` |
+| Alert-flow operator smoke path | `python scripts/alert_flow_smoke.py` |
 | Cross-cutting release prep | all three command groups |
 
 ## Current follow-up gaps
@@ -74,6 +90,8 @@ These are the first post-`v0.1.0` maintainer checks to keep visible:
    keeping it private.
 4. Keep one copy-paste onboarding path current so a new user can try the alert
    flow without reading the whole codebase first.
+5. Keep one repeatable smoke script current so maintainers can verify the alert
+   lifecycle without stepping through the UI manually.
 
 ### Observed on 2026-06-28
 
@@ -85,6 +103,9 @@ These are the first post-`v0.1.0` maintainer checks to keep visible:
 - The public alert-flow quickstart should stay aligned with the real dashboard
   and API surface: create/load user, create rule, reconnect with the last
   alert email, disable, re-enable, ingest, and inspect alerts.
+- The repository now also has a repeatable API smoke path in
+  `scripts/alert_flow_smoke.py`; keep it aligned with the same alert lifecycle
+  so maintainers can verify the flow without a browser session.
 
 Treat future scheduler noise in tests as a regression.
 

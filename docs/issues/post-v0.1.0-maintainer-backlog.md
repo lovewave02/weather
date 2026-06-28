@@ -34,11 +34,12 @@ Completed on 2026-06-28:
 - [x] let the dashboard disable an existing alert rule so revisit users can stop a saved notification without rebuilding their whole alert setup
 - [x] let the dashboard re-enable a disabled alert rule and treat the same create action as reactivation instead of leaving disabled duplicates stranded
 - [x] publish a copy-paste quickstart for the alert flow so a new user can try the current dashboard and API path without reading the whole repo first
+- [x] add a repeatable alert-flow smoke script so maintainers can verify the same lifecycle without clicking through the UI manually
 - [x] return specific duplicate-create conflict details for users, locations, and alert rules so failed actions explain what already exists
 
 Still open:
 
-- [ ] collect the next public cleanup task that creates stronger adoption signal beyond maintainer-surface, operator-surface, and reusable alert-flow hardening
+- [ ] collect the next public cleanup task that creates stronger adoption signal beyond maintainer-surface, operator-surface, reusable alert-flow hardening, and smoke-proof automation
 
 Current observed note:
 
@@ -87,6 +88,11 @@ Current observed note:
   UI and API alert lifecycle end-to-end, including create/load user, create
   rule, disable, re-enable, ingest, and alert inspection. Frontend `npm run
   build` still passed after the documentation refresh.
+- Rechecked on 2026-06-28: the repository now also ships
+  `scripts/alert_flow_smoke.py`, which waits for backend health, ensures one
+  location and one user exist, creates or reuses a matching rule, exercises
+  disable/enable, runs ingest, and prints a JSON summary of the resulting
+  alert state so maintainers can verify the same flow without the browser UI.
 - Rechecked on 2026-06-28: `docs/VERIFICATION_MATRIX.md` now also reflects the
   current backend proof (`19 tests, 0 failures`) and the real alert lifecycle
   users see today, including reconnecting with the last alert email before
