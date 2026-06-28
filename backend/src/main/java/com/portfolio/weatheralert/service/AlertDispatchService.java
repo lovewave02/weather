@@ -31,6 +31,11 @@ public class AlertDispatchService {
     @SchedulerLock(name = "alert_dispatch", lockAtMostFor = "PT2M", lockAtLeastFor = "PT5S")
     @Transactional
     public void dispatchPending() {
+        dispatchPendingNow();
+    }
+
+    @Transactional
+    public int dispatchPendingNow() {
         List<AlertEvent> pending = alertEventRepository.findTop50ByStatusOrderByCreatedAtAsc(AlertStatus.PENDING);
         Instant sentAt = clock.instant();
 
@@ -41,5 +46,6 @@ public class AlertDispatchService {
         if (!pending.isEmpty()) {
             log.info("ALERT_DISPATCHED count={}", pending.size());
         }
+        return pending.size();
     }
 }

@@ -101,6 +101,7 @@ erDiagram
 - `POST /api/v1/subscriptions/{subscriptionId}/disable` rule 비활성화
 - `POST /api/v1/subscriptions/{subscriptionId}/enable` rule 재활성화
 - `POST /api/v1/ingest/run` 수동 ingest 실행 및 요약 확인
+- `POST /api/v1/dispatch/alerts` 수동 alert dispatcher 실행
 - `GET /api/v1/users/{userId}/alerts` 알림 이벤트 조회
 
 ## 로컬 실행

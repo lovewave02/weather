@@ -23,6 +23,8 @@ This file follows a simple keep-a-changelog style.
   dashboard and API flow without reading the whole repository first
 - Add a repeatable alert-flow smoke script so maintainers can verify the
   current API lifecycle and ingest path without clicking through the UI
+- Add a manual alert-dispatch endpoint and extend the smoke path so the same
+  maintainer proof run verifies `PENDING -> SENT` outbox processing
 - Return specific duplicate-create conflict messages for users, locations, and
   alert rules instead of a generic `conflict` response
 - Return ingest run summaries from the manual weather refresh API and surface

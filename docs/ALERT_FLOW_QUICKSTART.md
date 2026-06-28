@@ -48,11 +48,12 @@ python scripts/alert_flow_smoke.py
 ```
 
 The script waits for backend health, ensures one location and one user exist,
-creates or reuses a matching rule, exercises disable/enable, runs ingest, and
-prints a JSON summary with the latest alert count. Its default threshold is
-chosen to make alert creation likely for the selected rule type. By default it
-creates a fresh smoke location so the same run can also prove `alertsCreated`
-and a real alert event without depending on an older snapshot.
+creates or reuses a matching rule, exercises disable/enable, runs ingest,
+manually dispatches pending alerts, and prints a JSON summary with the latest
+alert count. Its default threshold is chosen to make alert creation likely for
+the selected rule type. By default it creates a fresh smoke location so the
+same run can also prove `alertsCreated`, one real alert event, and its
+transition from `PENDING` to `SENT` without depending on an older snapshot.
 
 Create a user:
 
@@ -111,6 +112,12 @@ Run ingest:
 curl -sS -X POST http://localhost:8080/api/v1/ingest/run
 ```
 
+Dispatch pending alerts:
+
+```bash
+curl -sS -X POST http://localhost:8080/api/v1/dispatch/alerts
+```
+
 List alert events:
 
 ```bash
@@ -129,7 +136,7 @@ npm run build
 For smoke-script changes, also run:
 
 ```bash
-python scripts/alert_flow_smoke.py --skip-ingest
+python scripts/alert_flow_smoke.py
 python -m py_compile scripts/alert_flow_smoke.py
 ```
 

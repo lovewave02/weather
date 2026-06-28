@@ -171,6 +171,10 @@ def ensure_subscription(
     return matched, "reused"
 
 
+def dispatch_alerts(client: Client) -> dict[str, Any]:
+    return client.request("POST", "/api/v1/dispatch/alerts", body={})
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run a local smoke test for the weather alert flow.")
     parser.add_argument("--base-url", default="http://localhost:8080", help="Backend base URL.")
@@ -213,9 +217,11 @@ def main() -> int:
             toggled.append("enabled")
 
         ingest_result = None
+        dispatch_result = None
         alerts: list[dict[str, Any]] = []
         if not args.skip_ingest:
             ingest_result = client.request("POST", "/api/v1/ingest/run")
+            dispatch_result = dispatch_alerts(client)
             alerts = client.request("GET", f"/api/v1/users/{user['id']}/alerts")
 
         summary = {
@@ -231,6 +237,7 @@ def main() -> int:
                 "toggled": toggled,
             },
             "ingest": ingest_result,
+            "dispatch": dispatch_result,
             "alertCount": len(alerts),
             "latestAlert": alerts[0] if alerts else None,
         }

@@ -35,6 +35,7 @@ Completed on 2026-06-28:
 - [x] let the dashboard re-enable a disabled alert rule and treat the same create action as reactivation instead of leaving disabled duplicates stranded
 - [x] publish a copy-paste quickstart for the alert flow so a new user can try the current dashboard and API path without reading the whole repo first
 - [x] add a repeatable alert-flow smoke script so maintainers can verify the same lifecycle without clicking through the UI manually
+- [x] add a manual dispatch path so the same maintainer proof run can also verify outbox processing from `PENDING` to `SENT`
 - [x] return specific duplicate-create conflict details for users, locations, and alert rules so failed actions explain what already exists
 
 Still open:
@@ -97,6 +98,10 @@ Current observed note:
   location plus an alert-friendly rule, so the same run also proves
   `alertsCreated=1` and at least one real alert event instead of stopping at a
   lifecycle-only ingest summary.
+- Rechecked later on 2026-06-28: the repository now also exposes a manual
+  dispatch endpoint for pending alerts, and the default smoke path calls it so
+  the same run proves one alert event moves from `PENDING` to `SENT` on the
+  live local stack.
 - Rechecked on 2026-06-28: `docs/VERIFICATION_MATRIX.md` now also reflects the
   current backend proof (`19 tests, 0 failures`) and the real alert lifecycle
   users see today, including reconnecting with the last alert email before

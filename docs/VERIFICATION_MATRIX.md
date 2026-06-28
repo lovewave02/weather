@@ -69,6 +69,8 @@ What this covers:
 - disable/enable rule lifecycle
 - manual ingest plus alert listing summary, including one real alert event on
   the default fresh-location path
+- manual outbox dispatch proof, including one `SENT` alert event on the same
+  default path
 
 ## When to run which checks
 
@@ -107,7 +109,7 @@ These are the first post-`v0.1.0` maintainer checks to keep visible:
 - The repository now also has a repeatable API smoke path in
   `scripts/alert_flow_smoke.py`; keep it aligned with the same alert lifecycle
   so maintainers can verify the flow without a browser session and still prove
-  one real alert event on the default path.
+  one real alert event plus manual dispatcher processing on the default path.
 
 Treat future scheduler noise in tests as a regression.
 
