@@ -25,7 +25,7 @@ Completed on 2026-06-28:
 
 - [x] documented the expected local verification matrix for backend, frontend, and daily automation
 - [x] removed the false H2-backed scheduled `shedlock` noise from test-profile verification by gating scheduling infrastructure behind `weather.scheduling.enabled`
-- [x] aligned release-facing maintainer docs with the real backend verification command (`mvn test`) so public maintainer guidance matches the current repository state
+- [x] aligned release-facing maintainer docs and the contribution guide with the real backend verification command (`mvn test`) so public maintainer guidance matches the current repository state
 
 Still open:
 
@@ -39,6 +39,9 @@ Current observed note:
 - Rechecked on 2026-06-28: release-facing maintainer docs now point to `mvn test`
   rather than `./mvnw test`, which matches the current repository because
   `backend/mvnw` is not present.
+- Rechecked on 2026-06-28: the contribution guide now points directly to
+  `mvn test` for the same reason, so public verification guidance is consistent
+  across maintainer-facing docs.
 
 This issue should act as the public anchor for the next small maintenance changes instead of keeping the backlog private.
 

@@ -39,12 +39,6 @@ This repository is a monorepo for a weather alert platform plus a small daily da
 
 ```bash
 cd backend
-./mvnw test
-```
-
-If `./mvnw` is unavailable in your environment, use:
-
-```bash
 mvn test
 ```
 
