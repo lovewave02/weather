@@ -8,6 +8,12 @@ This file follows a simple keep-a-changelog style.
 
 ### Changed
 
+- No unreleased changes yet
+
+## v0.1.1 - 2026-06-28
+
+### Changed
+
 - Prepare the repository for the next post-`v0.1.0` maintenance cycle
 - Surface the alert flow in the dashboard so a user can create an alert user,
   add a rule for the selected city, and inspect recent alert events after ingest
