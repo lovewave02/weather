@@ -42,7 +42,7 @@ Still open:
 
 Current observed note:
 
-- Rechecked on 2026-06-28: `mvn test` passes (`6 tests, 0 failures`) and the
+- Rechecked on 2026-06-28: `mvn test` passes (`19 tests, 0 failures`) and the
   test profile now disables scheduling infrastructure cleanly, so the prior
   H2-backed `SHEDLOCK` table noise is no longer emitted during `SmokeTest`.
 - Rechecked on 2026-06-28: release-facing maintainer docs now point to `mvn test`
@@ -87,6 +87,10 @@ Current observed note:
   UI and API alert lifecycle end-to-end, including create/load user, create
   rule, disable, re-enable, ingest, and alert inspection. Frontend `npm run
   build` still passed after the documentation refresh.
+- Rechecked on 2026-06-28: `docs/VERIFICATION_MATRIX.md` now also reflects the
+  current backend proof (`19 tests, 0 failures`) and the real alert lifecycle
+  users see today, including reconnecting with the last alert email before
+  disable/re-enable and ingest follow-up steps.
 - Rechecked on 2026-06-28: duplicate creates no longer collapse into a generic
   `conflict` detail; the backend now returns specific messages for duplicate
   users, duplicate coordinates, and duplicate alert rules. Backend verification
