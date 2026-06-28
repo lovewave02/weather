@@ -77,14 +77,14 @@ These are the first post-`v0.1.0` maintainer checks to keep visible:
 
 ### Observed on 2026-06-28
 
-- `mvn test` finished with `BUILD SUCCESS` and `Tests run: 6, Failures: 0,
+- `mvn test` finished with `BUILD SUCCESS` and `Tests run: 19, Failures: 0,
   Errors: 0`.
 - The test profile now disables the scheduling infrastructure through
   `weather.scheduling.enabled=false`, so the previous H2/ShedLock noise no
   longer appears during `SmokeTest`.
 - The public alert-flow quickstart should stay aligned with the real dashboard
-  and API surface: create/load user, create rule, disable, re-enable, ingest,
-  and inspect alerts.
+  and API surface: create/load user, create rule, reconnect with the last
+  alert email, disable, re-enable, ingest, and inspect alerts.
 
 Treat future scheduler noise in tests as a regression.
 
