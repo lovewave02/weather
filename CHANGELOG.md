@@ -25,6 +25,9 @@ This file follows a simple keep-a-changelog style.
   current API lifecycle and ingest path without clicking through the UI
 - Add a manual alert-dispatch endpoint and extend the smoke path so the same
   maintainer proof run verifies `PENDING -> SENT` outbox processing
+- Expose the same manual alert-dispatch path in the dashboard so an outsider
+  can move `PENDING` alerts to `SENT` and inspect `sentAt` without leaving the
+  UI
 - Return specific duplicate-create conflict messages for users, locations, and
   alert rules instead of a generic `conflict` response
 - Return ingest run summaries from the manual weather refresh API and surface

@@ -6,6 +6,7 @@ import {
   createUser,
   createLocation,
   disableSubscription,
+  dispatchAlerts,
   enableSubscription,
   getCurrentWeather,
   getHealth,
@@ -16,6 +17,7 @@ import {
   listSubscriptions,
   runIngest,
   type AlertEventResponse,
+  type AlertDispatchRunResponse,
   type CurrentWeatherResponse,
   type CreateSubscriptionRequest,
   type IngestRunResponse,
@@ -83,6 +85,12 @@ function ingestSummaryMessage(result: IngestRunResponse) {
   return `Ingest 결과: 대상 ${result.totalLocations}, 수집 ${result.fetchedLocations}, 신규 ${result.insertedSnapshots}, 갱신 ${result.updatedSnapshots}, 변경없음 ${result.unchangedSnapshots}, 미수집 ${result.providerMisses}, alert ${result.alertsCreated}`
 }
 
+function dispatchSummaryMessage(result: AlertDispatchRunResponse) {
+  return result.dispatchedAlerts > 0
+    ? `Dispatch 결과: ${result.dispatchedAlerts}건을 SENT로 처리했어.`
+    : 'Dispatch 결과: 보낼 PENDING alert가 없었어.'
+}
+
 function subscriptionLabel(ruleType: RuleType, threshold: string) {
   switch (ruleType) {
     case 'TEMP_BELOW':
@@ -117,6 +125,7 @@ function App() {
   const [seedHint, setSeedHint] = useState<string | null>(null)
   const [seeding, setSeeding] = useState(false)
   const [ingesting, setIngesting] = useState(false)
+  const [dispatchingAlerts, setDispatchingAlerts] = useState(false)
 
   const [userEmail, setUserEmail] = useState(() => readSavedAlertEmail() ?? 'alerts@example.com')
   const [currentUser, setCurrentUser] = useState<UserResponse | null>(null)
@@ -439,6 +448,23 @@ function App() {
     setSeeding(false)
 
     if (res.length > 0) void ingestAndRefresh(res)
+  }
+
+  async function handleDispatchAlerts() {
+    setDispatchingAlerts(true)
+    setAlertsHint(null)
+    setSeedHint(null)
+    try {
+      const result = await dispatchAlerts()
+      setSeedHint(dispatchSummaryMessage(result))
+      if (currentUser) {
+        await refreshAlerts(currentUser.id)
+      }
+    } catch (error) {
+      setAlertsHint(errorMessage(error))
+    } finally {
+      setDispatchingAlerts(false)
+    }
   }
 
   useEffect(() => {
@@ -795,6 +821,9 @@ function App() {
             <div className="panelHeader alertHeader">
               <h2>Alerts</h2>
               <div className="row">
+                <button className="ghost" onClick={() => void handleDispatchAlerts()} disabled={dispatchingAlerts}>
+                  {dispatchingAlerts ? 'Dispatching…' : 'Dispatch Pending'}
+                </button>
                 <button
                   className="ghost"
                   onClick={() => currentUser && void refreshAlerts(currentUser.id)}
@@ -818,6 +847,7 @@ function App() {
                       <span className="muted tiny">{formatKst(alert.createdAt)}</span>
                     </div>
                     <div className="alertMessage">{alert.message}</div>
+                    {alert.sentAt && <div className="muted tiny">sent {formatKst(alert.sentAt)}</div>}
                   </div>
                 ))}
               </div>

@@ -21,7 +21,7 @@
 - 저장된 도시 목록과 현재 관측/시간별 예보 확인
 - 수동 `Ingest Now` 실행 후 fetched/new/unchanged/missed 요약 확인
 - alert 사용자 생성 또는 기존 이메일 재연결, 선택 도시 기준 rule 등록/비활성화/재활성화, 현재 rule 목록/최신 alert 이벤트 조회
-- dispatcher가 PENDING alert를 SENT로 처리하는 outbox 흐름 검증
+- 대시보드에서 `Dispatch Pending`을 눌러 PENDING alert를 SENT로 처리하고 `sentAt`까지 확인
 
 ## Daily Auto Improvement
 

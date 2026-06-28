@@ -34,7 +34,10 @@ npm run dev
 5. Create a rule for the selected city.
 6. Run `Ingest Now` again and reload alerts if you want to inspect the newest
    generated alert events.
-7. Use `Disable Rule` or `Enable Rule` from `Current rules` to test the saved
+7. Click `Dispatch Pending` if you want the same UI session to move new alerts
+   from `PENDING` to `SENT` immediately and expose `sentAt` without waiting for
+   the scheduled dispatcher.
+8. Use `Disable Rule` or `Enable Rule` from `Current rules` to test the saved
    rule lifecycle.
 
 ## API Path

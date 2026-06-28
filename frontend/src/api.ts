@@ -160,6 +160,10 @@ export type IngestRunResponse = {
   alertsCreated: number
 }
 
+export type AlertDispatchRunResponse = {
+  dispatchedAlerts: number
+}
+
 export async function getHealth(): Promise<HealthResponse> {
   return request<HealthResponse>('/actuator/health')
 }
@@ -217,6 +221,10 @@ export async function listAlerts(userId: string): Promise<AlertEventResponse[]> 
 
 export async function runIngest(): Promise<IngestRunResponse> {
   return request<IngestRunResponse>('/api/v1/ingest/run', { method: 'POST' })
+}
+
+export async function dispatchAlerts(): Promise<AlertDispatchRunResponse> {
+  return request<AlertDispatchRunResponse>('/api/v1/dispatch/alerts', { method: 'POST', body: '{}' })
 }
 
 export async function getCurrentWeather(locationId: string): Promise<CurrentWeatherResponse> {

@@ -98,14 +98,15 @@ These are the first post-`v0.1.0` maintainer checks to keep visible:
 
 ### Observed on 2026-06-28
 
-- `mvn test` finished with `BUILD SUCCESS` and `Tests run: 19, Failures: 0,
+- `mvn test` finished with `BUILD SUCCESS` and `Tests run: 21, Failures: 0,
   Errors: 0`.
 - The test profile now disables the scheduling infrastructure through
   `weather.scheduling.enabled=false`, so the previous H2/ShedLock noise no
   longer appears during `SmokeTest`.
 - The public alert-flow quickstart should stay aligned with the real dashboard
   and API surface: create/load user, create rule, reconnect with the last
-  alert email, disable, re-enable, ingest, and inspect alerts.
+  alert email, disable, re-enable, ingest, manually dispatch pending alerts,
+  and inspect `sentAt` on delivered alerts.
 - The repository now also has a repeatable API smoke path in
   `scripts/alert_flow_smoke.py`; keep it aligned with the same alert lifecycle
   so maintainers can verify the flow without a browser session and still prove

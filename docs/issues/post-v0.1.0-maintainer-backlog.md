@@ -36,6 +36,7 @@ Completed on 2026-06-28:
 - [x] publish a copy-paste quickstart for the alert flow so a new user can try the current dashboard and API path without reading the whole repo first
 - [x] add a repeatable alert-flow smoke script so maintainers can verify the same lifecycle without clicking through the UI manually
 - [x] add a manual dispatch path so the same maintainer proof run can also verify outbox processing from `PENDING` to `SENT`
+- [x] expose the same manual dispatch path in the dashboard so an outsider can finish the alert flow in the UI and see `sentAt` without waiting for the scheduled dispatcher
 - [x] return specific duplicate-create conflict details for users, locations, and alert rules so failed actions explain what already exists
 
 Still open:
@@ -102,8 +103,12 @@ Current observed note:
   dispatch endpoint for pending alerts, and the default smoke path calls it so
   the same run proves one alert event moves from `PENDING` to `SENT` on the
   live local stack.
+- Rechecked later on 2026-06-28: the dashboard now also exposes the same
+  manual dispatch path through `Dispatch Pending`, so a browser-only user can
+  move a just-created alert from `PENDING` to `SENT` immediately and inspect
+  `sentAt` in the alert list without waiting for the scheduled dispatcher.
 - Rechecked on 2026-06-28: `docs/VERIFICATION_MATRIX.md` now also reflects the
-  current backend proof (`19 tests, 0 failures`) and the real alert lifecycle
+  current backend proof (`21 tests, 0 failures`) and the real alert lifecycle
   users see today, including reconnecting with the last alert email before
   disable/re-enable and ingest follow-up steps.
 - Rechecked on 2026-06-28: duplicate creates no longer collapse into a generic
