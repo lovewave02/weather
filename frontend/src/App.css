@@ -388,6 +388,19 @@ input:focus {
   border-color: rgba(100, 108, 255, 0.9);
 }
 
+select {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(0, 0, 0, 0.25);
+  color: inherit;
+}
+
+select:focus {
+  outline: none;
+  border-color: rgba(100, 108, 255, 0.9);
+}
+
 .hint {
   font-size: 12px;
   opacity: 0.8;
@@ -439,6 +452,60 @@ input:focus {
   border-radius: 14px;
   padding: 16px;
   background: rgba(0, 0, 0, 0.18);
+}
+
+.alertCard {
+  margin-top: 14px;
+}
+
+.alertHeader {
+  margin-top: 14px;
+}
+
+.gridSingle {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.gridAlert {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 0.8fr;
+  gap: 10px;
+}
+
+@media (max-width: 560px) {
+  .gridAlert {
+    grid-template-columns: 1fr;
+  }
+}
+
+.alertList {
+  margin-top: 12px;
+  display: grid;
+  gap: 10px;
+}
+
+.alertItem {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.spread {
+  justify-content: space-between;
+}
+
+.tiny {
+  font-size: 11px;
+}
+
+.alertMessage {
+  margin-top: 8px;
+  font-size: 12px;
+  line-height: 1.45;
+  word-break: break-word;
 }
 
 .cardTitle {

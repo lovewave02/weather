@@ -2,16 +2,24 @@ import './App.css'
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import {
   ApiError,
+  createSubscription,
+  createUser,
   createLocation,
   getCurrentWeather,
   getHealth,
   getHourlyWeather,
+  listAlerts,
   listLocations,
   runIngest,
+  type AlertEventResponse,
   type CurrentWeatherResponse,
+  type CreateSubscriptionRequest,
   type IngestRunResponse,
   type HourlyWeatherResponse,
   type LocationResponse,
+  type RuleType,
+  type SubscriptionResponse,
+  type UserResponse,
 } from './api'
 import { HourlyTempChart } from './HourlyTempChart'
 import { KOREA_CITIES } from './koreaCities'
@@ -24,6 +32,8 @@ type CurrentEntry =
   | { state: 'ready'; data: CurrentWeatherResponse }
   | { state: 'empty' }
   | { state: 'error'; error: string }
+
+type AlertLoadState = 'idle' | 'loading' | 'ready' | 'empty' | 'error'
 
 const TIME_ZONE = 'Asia/Seoul'
 
@@ -50,6 +60,17 @@ function ingestSummaryMessage(result: IngestRunResponse) {
   return `Ingest 결과: 대상 ${result.totalLocations}, 수집 ${result.fetchedLocations}, 신규 ${result.insertedSnapshots}, 갱신 ${result.updatedSnapshots}, 변경없음 ${result.unchangedSnapshots}, 미수집 ${result.providerMisses}, alert ${result.alertsCreated}`
 }
 
+function subscriptionLabel(ruleType: RuleType, threshold: string) {
+  switch (ruleType) {
+    case 'TEMP_BELOW':
+      return `기온 ${threshold}°C 아래`
+    case 'TEMP_ABOVE':
+      return `기온 ${threshold}°C 위`
+    case 'PRECIP_ABOVE':
+      return `강수 ${threshold}mm 위`
+  }
+}
+
 function App() {
   const [health, setHealth] = useState<string>('unknown')
   const [healthHint, setHealthHint] = useState<string | null>(null)
@@ -73,6 +94,21 @@ function App() {
   const [seedHint, setSeedHint] = useState<string | null>(null)
   const [seeding, setSeeding] = useState(false)
   const [ingesting, setIngesting] = useState(false)
+
+  const [userEmail, setUserEmail] = useState('alerts@example.com')
+  const [currentUser, setCurrentUser] = useState<UserResponse | null>(null)
+  const [userHint, setUserHint] = useState<string | null>(null)
+  const [creatingUser, setCreatingUser] = useState(false)
+
+  const [subscriptionRuleType, setSubscriptionRuleType] = useState<RuleType>('TEMP_BELOW')
+  const [subscriptionThreshold, setSubscriptionThreshold] = useState('20')
+  const [lastSubscription, setLastSubscription] = useState<SubscriptionResponse | null>(null)
+  const [subscriptionHint, setSubscriptionHint] = useState<string | null>(null)
+  const [creatingSubscription, setCreatingSubscription] = useState(false)
+
+  const [alerts, setAlerts] = useState<AlertEventResponse[]>([])
+  const [alertsState, setAlertsState] = useState<AlertLoadState>('idle')
+  const [alertsHint, setAlertsHint] = useState<string | null>(null)
 
   const selectedLocation = useMemo(() => {
     if (!selectedLocationId) return null
@@ -169,6 +205,20 @@ function App() {
     }
   }
 
+  async function refreshAlerts(userId: string) {
+    setAlertsState('loading')
+    setAlertsHint(null)
+    try {
+      const res = await listAlerts(userId)
+      setAlerts(res)
+      setAlertsState(res.length === 0 ? 'empty' : 'ready')
+    } catch (error) {
+      setAlerts([])
+      setAlertsState('error')
+      setAlertsHint(errorMessage(error))
+    }
+  }
+
   async function handleCreateLocation(event: FormEvent) {
     event.preventDefault()
     setFormHint(null)
@@ -201,10 +251,62 @@ function App() {
       if (selectedLocationId) {
         void refreshHourly(selectedLocationId)
       }
+      if (currentUser) {
+        void refreshAlerts(currentUser.id)
+      }
     } catch (error) {
       setSeedHint(errorMessage(error))
     } finally {
       setIngesting(false)
+    }
+  }
+
+  async function handleCreateUser(event: FormEvent) {
+    event.preventDefault()
+    setCreatingUser(true)
+    setUserHint(null)
+    try {
+      const user = await createUser({ email: userEmail.trim() })
+      setCurrentUser(user)
+      setUserHint(`알림 사용자 연결: ${user.email}`)
+      void refreshAlerts(user.id)
+    } catch (error) {
+      setUserHint(errorMessage(error))
+    } finally {
+      setCreatingUser(false)
+    }
+  }
+
+  async function handleCreateSubscription(event: FormEvent) {
+    event.preventDefault()
+    if (!currentUser || !selectedLocationId) {
+      setSubscriptionHint('먼저 사용자와 도시를 선택해줘.')
+      return
+    }
+
+    const threshold = Number(subscriptionThreshold)
+    if (!Number.isFinite(threshold)) {
+      setSubscriptionHint('threshold는 숫자로 입력해줘.')
+      return
+    }
+
+    setCreatingSubscription(true)
+    setSubscriptionHint(null)
+    try {
+      const payload: CreateSubscriptionRequest = {
+        userId: currentUser.id,
+        locationId: selectedLocationId,
+        ruleType: subscriptionRuleType,
+        threshold,
+      }
+      const subscription = await createSubscription(payload)
+      setLastSubscription(subscription)
+      setSubscriptionHint(`구독 생성 완료: ${subscriptionLabel(subscription.ruleType, String(subscription.threshold))}`)
+      void refreshAlerts(currentUser.id)
+    } catch (error) {
+      setSubscriptionHint(errorMessage(error))
+    } finally {
+      setCreatingSubscription(false)
     }
   }
 
@@ -429,6 +531,96 @@ function App() {
               {hourlyState !== 'ready' && <div className="muted small">시간별 예보는 선택한 도시 기준으로 가져와.</div>}
             </>
           )}
+
+          <div className="card alertCard">
+            <div className="cardTitle">Alert Flow</div>
+            <div className="cardSub">사용자 생성 → 조건 등록 → Ingest 후 alert 이벤트 확인</div>
+
+            <form className="form" onSubmit={(e) => void handleCreateUser(e)}>
+              <div className="gridSingle">
+                <label>
+                  Alert Email
+                  <input value={userEmail} onChange={(e) => setUserEmail(e.target.value)} placeholder="alerts@example.com" />
+                </label>
+              </div>
+              <div className="row">
+                <button type="submit" disabled={creatingUser}>
+                  {creatingUser ? 'Creating…' : currentUser ? 'Create Another User' : 'Create Alert User'}
+                </button>
+                <div className="hint">{userHint}</div>
+              </div>
+            </form>
+
+            <form className="form" onSubmit={(e) => void handleCreateSubscription(e)}>
+              <div className="gridAlert">
+                <label>
+                  Target
+                  <input value={selectedLocation?.name ?? '도시를 먼저 선택해줘'} disabled />
+                </label>
+                <label>
+                  Rule
+                  <select value={subscriptionRuleType} onChange={(e) => setSubscriptionRuleType(e.target.value as RuleType)}>
+                    <option value="TEMP_BELOW">TEMP_BELOW</option>
+                    <option value="TEMP_ABOVE">TEMP_ABOVE</option>
+                    <option value="PRECIP_ABOVE">PRECIP_ABOVE</option>
+                  </select>
+                </label>
+                <label>
+                  Threshold
+                  <input value={subscriptionThreshold} onChange={(e) => setSubscriptionThreshold(e.target.value)} placeholder="20" />
+                </label>
+              </div>
+              <div className="row">
+                <button type="submit" disabled={creatingSubscription || !currentUser || !selectedLocation}>
+                  {creatingSubscription ? 'Saving…' : 'Create Alert Rule'}
+                </button>
+                <div className="hint">{subscriptionHint}</div>
+              </div>
+            </form>
+
+            {currentUser && (
+              <div className="muted small">
+                Active user: {currentUser.email} · {currentUser.id}
+              </div>
+            )}
+
+            {lastSubscription && (
+              <div className="muted small">
+                Last rule: {subscriptionLabel(lastSubscription.ruleType, String(lastSubscription.threshold))}
+              </div>
+            )}
+
+            <div className="panelHeader alertHeader">
+              <h2>Alerts</h2>
+              <div className="row">
+                <button
+                  className="ghost"
+                  onClick={() => currentUser && void refreshAlerts(currentUser.id)}
+                  disabled={!currentUser || alertsState === 'loading'}
+                >
+                  {alertsState === 'loading' ? 'Loading…' : 'Reload Alerts'}
+                </button>
+              </div>
+            </div>
+
+            {!currentUser && <div className="muted small">먼저 alert 사용자를 만들어야 알림 이벤트를 볼 수 있어.</div>}
+            {currentUser && alertsState === 'empty' && <div className="muted small">아직 alert 이벤트가 없어. 규칙을 만든 뒤 Ingest Now를 실행해봐.</div>}
+            {currentUser && alertsState === 'error' && alertsHint && <div className="notice">Alert error: {alertsHint}</div>}
+
+            {alerts.length > 0 && (
+              <div className="alertList">
+                {alerts.slice(0, 8).map((alert) => (
+                  <div key={alert.id} className="alertItem">
+                    <div className="row spread">
+                      <span className={`badge ${alert.status === 'SENT' ? 'ok' : 'warn'}`}>{alert.status.toLowerCase()}</span>
+                      <span className="muted tiny">{formatKst(alert.createdAt)}</span>
+                    </div>
+                    <div className="alertMessage">{alert.message}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </section>
       </main>
     </div>

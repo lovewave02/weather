@@ -16,6 +16,12 @@
 - `npm run dev`
 - Dev server: `http://localhost:5173`
 
+## Dashboard Capabilities
+
+- 저장된 도시 목록과 현재 관측/시간별 예보 확인
+- 수동 `Ingest Now` 실행 후 fetched/new/unchanged/missed 요약 확인
+- alert 사용자 생성, 선택 도시 기준 rule 등록, 최신 alert 이벤트 조회
+
 ## Daily Auto Improvement
 
 - 스크립트: `scripts/daily_weather_update.py`

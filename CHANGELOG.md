@@ -9,6 +9,8 @@ This file follows a simple keep-a-changelog style.
 ### Changed
 
 - Prepare the repository for the next post-`v0.1.0` maintenance cycle
+- Surface the alert flow in the dashboard so a user can create an alert user,
+  add a rule for the selected city, and inspect recent alert events after ingest
 - Return ingest run summaries from the manual weather refresh API and surface
   the counts in the dashboard so operators can see what a run actually did
 - Reject impossible latitude/longitude values at the location API boundary and

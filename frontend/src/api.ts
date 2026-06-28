@@ -77,6 +77,47 @@ export type CreateLocationRequest = {
   longitude: number
 }
 
+export type UserResponse = {
+  id: string
+  email: string
+  createdAt: string
+}
+
+export type CreateUserRequest = {
+  email: string
+}
+
+export type RuleType = 'TEMP_BELOW' | 'TEMP_ABOVE' | 'PRECIP_ABOVE'
+
+export type SubscriptionResponse = {
+  id: string
+  userId: string
+  locationId: string
+  ruleType: RuleType
+  threshold: number
+  enabled: boolean
+  createdAt: string
+}
+
+export type CreateSubscriptionRequest = {
+  userId: string
+  locationId: string
+  ruleType: RuleType
+  threshold: number
+}
+
+export type AlertStatus = 'PENDING' | 'SENT'
+
+export type AlertEventResponse = {
+  id: string
+  subscriptionId: string
+  snapshotId: string
+  status: AlertStatus
+  message: string
+  createdAt: string
+  sentAt: string | null
+}
+
 export type CurrentWeatherResponse = {
   locationId: string
   observedAt: string
@@ -132,6 +173,24 @@ export async function createLocation(payload: CreateLocationRequest): Promise<Lo
     method: 'POST',
     body: JSON.stringify(payload),
   })
+}
+
+export async function createUser(payload: CreateUserRequest): Promise<UserResponse> {
+  return request<UserResponse>('/api/v1/users', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+}
+
+export async function createSubscription(payload: CreateSubscriptionRequest): Promise<SubscriptionResponse> {
+  return request<SubscriptionResponse>('/api/v1/subscriptions', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+}
+
+export async function listAlerts(userId: string): Promise<AlertEventResponse[]> {
+  return request<AlertEventResponse[]>(`/api/v1/users/${userId}/alerts`)
 }
 
 export async function runIngest(): Promise<IngestRunResponse> {
