@@ -38,6 +38,7 @@ type CurrentEntry =
 type AlertLoadState = 'idle' | 'loading' | 'ready' | 'empty' | 'error'
 
 const TIME_ZONE = 'Asia/Seoul'
+const ALERT_EMAIL_STORAGE_KEY = 'weather:last-alert-email'
 
 function errorMessage(error: unknown): string {
   if (error instanceof ApiError) return error.message
@@ -56,6 +57,24 @@ function formatKst(value: string) {
 function fmtNumber(value: number | null | undefined, unit = '', digits = 1) {
   if (value == null || !Number.isFinite(value)) return '-'
   return `${value.toFixed(digits)}${unit}`
+}
+
+function readSavedAlertEmail() {
+  if (typeof window === 'undefined') return null
+  const value = window.localStorage.getItem(ALERT_EMAIL_STORAGE_KEY)?.trim()
+  return value ? value : null
+}
+
+function saveAlertEmail(email: string) {
+  if (typeof window === 'undefined') return
+  const value = email.trim()
+  if (!value) return
+  window.localStorage.setItem(ALERT_EMAIL_STORAGE_KEY, value)
+}
+
+function clearSavedAlertEmail() {
+  if (typeof window === 'undefined') return
+  window.localStorage.removeItem(ALERT_EMAIL_STORAGE_KEY)
 }
 
 function ingestSummaryMessage(result: IngestRunResponse) {
@@ -97,10 +116,11 @@ function App() {
   const [seeding, setSeeding] = useState(false)
   const [ingesting, setIngesting] = useState(false)
 
-  const [userEmail, setUserEmail] = useState('alerts@example.com')
+  const [userEmail, setUserEmail] = useState(() => readSavedAlertEmail() ?? 'alerts@example.com')
   const [currentUser, setCurrentUser] = useState<UserResponse | null>(null)
   const [userHint, setUserHint] = useState<string | null>(null)
   const [creatingUser, setCreatingUser] = useState(false)
+  const [autoReconnectChecked, setAutoReconnectChecked] = useState(false)
 
   const [subscriptionRuleType, setSubscriptionRuleType] = useState<RuleType>('TEMP_BELOW')
   const [subscriptionThreshold, setSubscriptionThreshold] = useState('20')
@@ -285,8 +305,10 @@ function App() {
     setCreatingUser(true)
     setUserHint(null)
     try {
-      const user = await createUser({ email: userEmail.trim() })
+      const email = userEmail.trim()
+      const user = await createUser({ email })
       setCurrentUser(user)
+      saveAlertEmail(email)
       setUserHint(`알림 사용자 연결: ${user.email}`)
       void refreshAlerts(user.id)
       void refreshSubscriptions(user.id)
@@ -301,12 +323,17 @@ function App() {
     setCreatingUser(true)
     setUserHint(null)
     try {
-      const user = await getUserByEmail(userEmail.trim())
+      const email = userEmail.trim()
+      const user = await getUserByEmail(email)
       setCurrentUser(user)
+      saveAlertEmail(email)
       setUserHint(`기존 사용자 연결: ${user.email}`)
       void refreshAlerts(user.id)
       void refreshSubscriptions(user.id)
     } catch (error) {
+      if (error instanceof ApiError && error.status === 404) {
+        clearSavedAlertEmail()
+      }
       setUserHint(errorMessage(error))
     } finally {
       setCreatingUser(false)
@@ -380,6 +407,43 @@ function App() {
     void refreshLocations(true)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    if (autoReconnectChecked) return
+    const savedEmail = readSavedAlertEmail()
+    if (!savedEmail) {
+      setAutoReconnectChecked(true)
+      return
+    }
+
+    setUserEmail(savedEmail)
+    setCreatingUser(true)
+    setUserHint('마지막 alert 사용자를 다시 연결하는 중…')
+
+    void getUserByEmail(savedEmail)
+      .then((user) => {
+        setCurrentUser(user)
+        saveAlertEmail(savedEmail)
+        setUserHint(`마지막 alert 사용자를 다시 연결했어: ${user.email}`)
+        void refreshAlerts(user.id)
+        void refreshSubscriptions(user.id)
+      })
+      .catch((error: unknown) => {
+        setCurrentUser(null)
+        setAlerts([])
+        setSubscriptions([])
+        if (error instanceof ApiError && error.status === 404) {
+          clearSavedAlertEmail()
+          setUserHint('저장된 alert 사용자를 찾지 못해서 자동 재연결 정보를 비웠어.')
+          return
+        }
+        setUserHint(`자동 재연결 실패: ${errorMessage(error)}`)
+      })
+      .finally(() => {
+        setCreatingUser(false)
+        setAutoReconnectChecked(true)
+      })
+  }, [autoReconnectChecked])
 
   useEffect(() => {
     if (!selectedLocationId) {
