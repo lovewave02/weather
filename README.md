@@ -1,7 +1,31 @@
 # Weather (Monorepo)
 
+![Release](https://img.shields.io/github/v/release/lovewave02/weather?display_name=tag)
+![CI](https://github.com/lovewave02/weather/actions/workflows/ci.yml/badge.svg)
+![License](https://img.shields.io/github/license/lovewave02/weather)
+
 - `backend/`: Spring Boot 기반 Weather Alert Platform 백엔드
 - `frontend/`: React(Vite) 프론트엔드
+
+Latest public release:
+
+- [`Weather v0.1.1`](https://github.com/lovewave02/weather/releases/tag/v0.1.1)
+
+## Quick Demo
+
+Fastest outsider path:
+
+1. Start the backend with `cd backend && docker compose up -d --build`
+2. Start the frontend with `cd frontend && npm install && npm run dev`
+3. Open `http://localhost:5173`
+4. Click `Load Korea`, then `Ingest Now`
+5. Create or load an alert user, add a rule, run `Ingest Now` again, and click `Dispatch Pending`
+
+If you want one repeatable CLI proof instead of the browser path, run:
+
+```bash
+python scripts/alert_flow_smoke.py
+```
 
 ## Run (Backend)
 
@@ -45,6 +69,7 @@ python scripts/daily_weather_update.py
 - Release checklist: [`docs/RELEASE_CHECKLIST.md`](docs/RELEASE_CHECKLIST.md)
 - Changelog: [`CHANGELOG.md`](CHANGELOG.md)
 - Smoke test script: `python scripts/alert_flow_smoke.py`
+- Current public backlog anchor: issue [`#1`](https://github.com/lovewave02/weather/issues/1)
 
 ## Maintainer roadmap
 

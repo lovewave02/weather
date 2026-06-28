@@ -38,6 +38,7 @@ Completed on 2026-06-28:
 - [x] add a manual dispatch path so the same maintainer proof run can also verify outbox processing from `PENDING` to `SENT`
 - [x] expose the same manual dispatch path in the dashboard so an outsider can finish the alert flow in the UI and see `sentAt` without waiting for the scheduled dispatcher
 - [x] return specific duplicate-create conflict details for users, locations, and alert rules so failed actions explain what already exists
+- [x] pull release, CI, and quick-demo signals into the README header so an outsider can trust the current public state faster
 
 Still open:
 
@@ -107,6 +108,10 @@ Current observed note:
   manual dispatch path through `Dispatch Pending`, so a browser-only user can
   move a just-created alert from `PENDING` to `SENT` immediately and inspect
   `sentAt` in the alert list without waiting for the scheduled dispatcher.
+- Rechecked later on 2026-06-28: the README now also surfaces the latest
+  release, CI badge, license badge, and the shortest browser/CLI demo entry
+  points at the top so a new outsider can see current trust signals before
+  reading the rest of the repository.
 - Rechecked on 2026-06-28: `docs/VERIFICATION_MATRIX.md` now also reflects the
   current backend proof (`21 tests, 0 failures`) and the real alert lifecycle
   users see today, including reconnecting with the last alert email before

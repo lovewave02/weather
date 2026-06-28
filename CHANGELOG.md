@@ -8,7 +8,8 @@ This file follows a simple keep-a-changelog style.
 
 ### Changed
 
-- No unreleased changes yet
+- Pull release, CI, license, and quick-demo trust signals into the README
+  header so outsiders can identify the current public state faster
 
 ## v0.1.1 - 2026-06-28
 
