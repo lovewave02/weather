@@ -8,12 +8,17 @@ automation
 
 ## What problem should this solve?
 
-The repository now has contribution guidance and a first public release, but there is still no public issue-driven maintenance trail.
-Without at least one visible maintainer backlog item, the repo still looks quiet even after `v0.1.0`.
+The repository now has public maintainer trail artifacts, but it still needs a
+single issue-driven backlog item that records what shipped after `v0.1.0` and
+what adoption-facing gap still remains.
+
+The repo no longer looks unmaintained; the remaining problem is that outside
+usage/adoption signal is still weaker than the maintainer surface.
 
 ## Proposed solution
 
-Create a maintainer-tracked follow-up issue that makes the next public operations work explicit:
+Keep one maintainer-tracked follow-up issue that makes the public operations
+trail explicit:
 
 1. document the expected local verification matrix for backend, frontend, and daily automation
 2. keep the local H2-based verification path free of false scheduled `shedlock` noise
@@ -42,91 +47,44 @@ Completed on 2026-06-28:
 
 Still open:
 
-- [ ] collect the next public cleanup task that creates stronger adoption signal beyond maintainer-surface, operator-surface, reusable alert-flow hardening, and smoke-proof automation
+- [ ] collect the next public cleanup task that creates stronger adoption
+      signal beyond maintainer-surface, operator-surface, reusable alert-flow
+      hardening, release management, and smoke-proof automation
 
 Current observed note:
 
-- Rechecked on 2026-06-28: `mvn test` passes (`19 tests, 0 failures`) and the
-  test profile now disables scheduling infrastructure cleanly, so the prior
-  H2-backed `SHEDLOCK` table noise is no longer emitted during `SmokeTest`.
-- Rechecked on 2026-06-28: release-facing maintainer docs now point to `mvn test`
-  rather than `./mvnw test`, which matches the current repository because
-  `backend/mvnw` is not present.
-- Rechecked on 2026-06-28: the contribution guide now points directly to
-  `mvn test` for the same reason, so public verification guidance is consistent
-  across maintainer-facing docs.
-- Rechecked on 2026-06-28: `mvn test` now also covers a controller-level
-  regression that rejects out-of-range coordinates with `400 Bad Request`
-  details (`latitude must be less than or equal to 90.0`,
-  `longitude must be less than or equal to 180.0`) instead of accepting
-  impossible world coordinates.
-- Rechecked on 2026-06-28: manual ingest now returns an operator-visible
-  summary payload (`totalLocations`, `fetchedLocations`, `insertedSnapshots`,
-  `updatedSnapshots`, `unchangedSnapshots`, `providerMisses`, `alertsCreated`)
-  and the React dashboard shows the same summary after `Ingest Now`; backend
-  verification passed with `10 tests, 0 failures` and frontend `npm run build`
-  also passed.
-- Rechecked on 2026-06-28: the React dashboard now also exposes the existing
-  alert APIs end-to-end for a basic user flow: create alert user, create rule
-  for the selected city, run ingest, and reload recent alert events. Frontend
-  production build passed after the new flow was wired up.
-- Rechecked on 2026-06-28: the same dashboard can now reconnect an existing
-  alert user by email and reload the current saved rules through new lightweight
-  backend lookup/list endpoints; backend verification passed with `13 tests, 0
-  failures` and frontend `npm run build` also passed.
-- Rechecked on 2026-06-28: the dashboard now also remembers the last alert
-  email in browser storage and auto-reconnects that user after refresh when the
-  account still exists, so the alert flow no longer drops back to a manual
-  re-entry step between visits. Frontend `npm run build` still passed.
-- Rechecked on 2026-06-28: alert rules can now be disabled from the dashboard
-  through a small backend action endpoint, so revisit users can turn off a
-  saved rule without recreating their whole alert setup. Backend verification
-  passed with `17 tests, 0 failures` and frontend `npm run build` also passed.
-- Rechecked on 2026-06-28: disabled alert rules can now be re-enabled from the
-  dashboard, and the same create action reactivates a matching disabled rule
-  instead of failing with a dead-end duplicate conflict. Backend verification
-  passed with `19 tests, 0 failures` and frontend `npm run build` also passed.
-- Rechecked on 2026-06-28: the repository now also ships a copy-paste
-  onboarding path in `docs/ALERT_FLOW_QUICKSTART.md` that covers the current
-  UI and API alert lifecycle end-to-end, including create/load user, create
-  rule, disable, re-enable, ingest, and alert inspection. Frontend `npm run
-  build` still passed after the documentation refresh.
-- Rechecked on 2026-06-28: the repository now also ships
-  `scripts/alert_flow_smoke.py`, which waits for backend health, ensures one
-  location and one user exist, creates or reuses a matching rule, exercises
-  disable/enable, runs ingest, and prints a JSON summary of the resulting
-  alert state so maintainers can verify the same flow without the browser UI.
-- Rechecked later on 2026-06-28: the smoke path now defaults to a fresh smoke
-  location plus an alert-friendly rule, so the same run also proves
-  `alertsCreated=1` and at least one real alert event instead of stopping at a
-  lifecycle-only ingest summary.
-- Rechecked later on 2026-06-28: the repository now also exposes a manual
-  dispatch endpoint for pending alerts, and the default smoke path calls it so
-  the same run proves one alert event moves from `PENDING` to `SENT` on the
-  live local stack.
-- Rechecked later on 2026-06-28: the dashboard now also exposes the same
-  manual dispatch path through `Dispatch Pending`, so a browser-only user can
-  move a just-created alert from `PENDING` to `SENT` immediately and inspect
-  `sentAt` in the alert list without waiting for the scheduled dispatcher.
-- Rechecked later on 2026-06-28: the README now also surfaces the latest
-  release, CI badge, license badge, and the shortest browser/CLI demo entry
-  points at the top so a new outsider can see current trust signals before
-  reading the rest of the repository.
-- Rechecked on 2026-06-28: `docs/VERIFICATION_MATRIX.md` now also reflects the
-  current backend proof (`21 tests, 0 failures`) and the real alert lifecycle
-  users see today, including reconnecting with the last alert email before
-  disable/re-enable and ingest follow-up steps.
-- Rechecked on 2026-06-28: duplicate creates no longer collapse into a generic
-  `conflict` detail; the backend now returns specific messages for duplicate
-  users, duplicate coordinates, and duplicate alert rules. Backend verification
-  passed with `16 tests, 0 failures` and frontend `npm run build` still passed.
+- Rechecked on 2026-06-28: backend verification now passes with
+  `21 tests, 0 failures`, and test-profile scheduling stays deterministic
+  because `weather.scheduling.enabled` gates the earlier H2-backed ShedLock
+  noise out of `SmokeTest`.
+- Rechecked on 2026-06-28: public maintainer docs now consistently point to
+  the real backend verification command `mvn test`, which matches the current
+  repository because `backend/mvnw` is not present.
+- Rechecked on 2026-06-28: the backend now rejects impossible coordinates,
+  returns specific duplicate-create conflict details, and exposes manual ingest
+  summaries plus manual dispatch so operators can see both refresh counts and
+  `PENDING -> SENT` delivery steps.
+- Rechecked on 2026-06-28: the dashboard now supports the full current alert
+  lifecycle: create/load user, remember and auto-reconnect the last alert
+  email, create rule, disable/re-enable, run ingest, manually dispatch pending
+  alerts, and inspect `sentAt` on delivered alerts.
+- Rechecked on 2026-06-28: outsider-facing docs now match that same flow
+  through `docs/ALERT_FLOW_QUICKSTART.md`, `docs/VERIFICATION_MATRIX.md`, the
+  README quick-demo section, and the repeatable `scripts/alert_flow_smoke.py`
+  proof path.
+- Rechecked on 2026-06-28: the repo now has two public releases (`v0.1.0`,
+  `v0.1.1`), and `v0.1.1` is tied to the current alert-flow proof path plus an
+  owner-authored release update comment on this issue.
+- Rechecked on 2026-06-28: the conservative eligibility check still returns
+  `manual_core_maintainer_evidence_needed`; the remaining missing signal is
+  outside adoption/feedback, not missing maintainer surface.
 
 This issue should act as the public anchor for the next small maintenance changes instead of keeping the backlog private.
 
 ## How would we verify success?
 
 - the issue is public and labeled `enhancement`
-- the issue links to `v0.1.0`
+- the issue links to the current public release trail (`v0.1.0`, `v0.1.1`)
 - the issue contains concrete follow-up checks instead of vague roadmap language
 - the next maintainer-facing patch can reference this issue directly
 - the repository keeps the same checklist in `docs/VERIFICATION_MATRIX.md`
