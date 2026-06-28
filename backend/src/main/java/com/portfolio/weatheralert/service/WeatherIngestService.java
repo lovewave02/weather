@@ -7,6 +7,7 @@ import com.portfolio.weatheralert.domain.Location;
 import com.portfolio.weatheralert.domain.WeatherSnapshot;
 import com.portfolio.weatheralert.repository.LocationRepository;
 import com.portfolio.weatheralert.repository.WeatherSnapshotRepository;
+import com.portfolio.weatheralert.service.dto.IngestRunResponse;
 import com.portfolio.weatheralert.weather.OpenMeteoClient;
 import com.portfolio.weatheralert.weather.WeatherObservation;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
@@ -46,17 +47,48 @@ public class WeatherIngestService {
     }
 
     @Transactional
-    public void ingestAllLocations() {
+    public IngestRunResponse ingestAllLocations() {
         List<Location> locations = locationRepository.findAll();
+        int fetchedLocations = 0;
+        int insertedSnapshots = 0;
+        int updatedSnapshots = 0;
+        int unchangedSnapshots = 0;
+        int providerMisses = 0;
+        int alertsCreated = 0;
+
         for (Location location : locations) {
-            openMeteoClient.fetchCurrent(location.getLatitude(), location.getLongitude())
-                    .ifPresent(observation -> upsertSnapshot(location, observation));
+            WeatherObservation observation = openMeteoClient.fetchCurrent(location.getLatitude(), location.getLongitude()).orElse(null);
+            if (observation == null) {
+                providerMisses++;
+                continue;
+            }
+
+            fetchedLocations++;
+            IngestOutcome outcome = upsertSnapshot(location, observation);
+            switch (outcome.status()) {
+                case INSERTED -> {
+                    insertedSnapshots++;
+                    alertsCreated += outcome.alertsCreated();
+                }
+                case UPDATED -> updatedSnapshots++;
+                case UNCHANGED -> unchangedSnapshots++;
+            }
         }
+
+        return new IngestRunResponse(
+                locations.size(),
+                fetchedLocations,
+                insertedSnapshots,
+                updatedSnapshots,
+                unchangedSnapshots,
+                providerMisses,
+                alertsCreated
+        );
     }
 
-    private void upsertSnapshot(Location location, WeatherObservation observation) {
-        weatherSnapshotRepository.findByLocationIdAndObservedAtAndSource(location.getId(), observation.observedAt(), SOURCE)
-                .ifPresentOrElse(existing -> {
+    private IngestOutcome upsertSnapshot(Location location, WeatherObservation observation) {
+        return weatherSnapshotRepository.findByLocationIdAndObservedAtAndSource(location.getId(), observation.observedAt(), SOURCE)
+                .map(existing -> {
                     boolean changed = existing.updateValues(
                             observation.temperatureC(),
                             observation.apparentTemperatureC(),
@@ -66,11 +98,14 @@ public class WeatherIngestService {
                     if (changed) {
                         weatherSnapshotRepository.save(existing);
                         evictCurrentWeatherCache(location.getId());
+                        return IngestOutcome.updated();
                     }
-                }, () -> insertSnapshot(location, observation));
+                    return IngestOutcome.unchanged();
+                })
+                .orElseGet(() -> insertSnapshot(location, observation));
     }
 
-    private void insertSnapshot(Location location, WeatherObservation observation) {
+    private IngestOutcome insertSnapshot(Location location, WeatherObservation observation) {
         WeatherSnapshot saved = weatherSnapshotRepository.save(
                 new WeatherSnapshot(
                         location,
@@ -83,7 +118,8 @@ public class WeatherIngestService {
                 )
         );
         evictCurrentWeatherCache(location.getId());
-        alertEvaluationService.evaluateSnapshot(saved);
+        int alertsCreated = alertEvaluationService.evaluateSnapshot(saved);
+        return IngestOutcome.inserted(alertsCreated);
     }
 
     private void evictCurrentWeatherCache(UUID locationId) {
@@ -91,5 +127,25 @@ public class WeatherIngestService {
         if (cache != null) {
             cache.evict(locationId);
         }
+    }
+
+    private record IngestOutcome(IngestStatus status, int alertsCreated) {
+        static IngestOutcome inserted(int alertsCreated) {
+            return new IngestOutcome(IngestStatus.INSERTED, alertsCreated);
+        }
+
+        static IngestOutcome updated() {
+            return new IngestOutcome(IngestStatus.UPDATED, 0);
+        }
+
+        static IngestOutcome unchanged() {
+            return new IngestOutcome(IngestStatus.UNCHANGED, 0);
+        }
+    }
+
+    private enum IngestStatus {
+        INSERTED,
+        UPDATED,
+        UNCHANGED
     }
 }

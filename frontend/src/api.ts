@@ -109,6 +109,16 @@ export type HourlyWeatherResponse = {
   apparentTemperature: TemperatureStats
 }
 
+export type IngestRunResponse = {
+  totalLocations: number
+  fetchedLocations: number
+  insertedSnapshots: number
+  updatedSnapshots: number
+  unchangedSnapshots: number
+  providerMisses: number
+  alertsCreated: number
+}
+
 export async function getHealth(): Promise<HealthResponse> {
   return request<HealthResponse>('/actuator/health')
 }
@@ -124,8 +134,8 @@ export async function createLocation(payload: CreateLocationRequest): Promise<Lo
   })
 }
 
-export async function runIngest(): Promise<void> {
-  await request<void>('/api/v1/ingest/run', { method: 'POST' })
+export async function runIngest(): Promise<IngestRunResponse> {
+  return request<IngestRunResponse>('/api/v1/ingest/run', { method: 'POST' })
 }
 
 export async function getCurrentWeather(locationId: string): Promise<CurrentWeatherResponse> {

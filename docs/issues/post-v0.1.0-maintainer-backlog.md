@@ -27,10 +27,11 @@ Completed on 2026-06-28:
 - [x] removed the false H2-backed scheduled `shedlock` noise from test-profile verification by gating scheduling infrastructure behind `weather.scheduling.enabled`
 - [x] aligned release-facing maintainer docs and the contribution guide with the real backend verification command (`mvn test`) so public maintainer guidance matches the current repository state
 - [x] reject impossible latitude/longitude values at the location API boundary and return field-level validation details for invalid coordinate payloads
+- [x] return manual ingest run summaries from the API and surface them in the dashboard so operators can see fetched/new/unchanged/missed counts after a refresh
 
 Still open:
 
-- [ ] collect the next public cleanup task that creates stronger operator or adoption signal beyond maintainer-surface hardening
+- [ ] collect the next public cleanup task that creates stronger adoption signal beyond maintainer-surface and operator-surface hardening
 
 Current observed note:
 
@@ -48,6 +49,12 @@ Current observed note:
   details (`latitude must be less than or equal to 90.0`,
   `longitude must be less than or equal to 180.0`) instead of accepting
   impossible world coordinates.
+- Rechecked on 2026-06-28: manual ingest now returns an operator-visible
+  summary payload (`totalLocations`, `fetchedLocations`, `insertedSnapshots`,
+  `updatedSnapshots`, `unchangedSnapshots`, `providerMisses`, `alertsCreated`)
+  and the React dashboard shows the same summary after `Ingest Now`; backend
+  verification passed with `10 tests, 0 failures` and frontend `npm run build`
+  also passed.
 
 This issue should act as the public anchor for the next small maintenance changes instead of keeping the backlog private.
 

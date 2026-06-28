@@ -1,10 +1,9 @@
 package com.portfolio.weatheralert.api;
 
 import com.portfolio.weatheralert.service.WeatherIngestService;
-import org.springframework.http.HttpStatus;
+import com.portfolio.weatheralert.service.dto.IngestRunResponse;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -18,9 +17,7 @@ public class IngestController {
     }
 
     @PostMapping("/run")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public void runOnce() {
-        weatherIngestService.ingestAllLocations();
+    public IngestRunResponse runOnce() {
+        return weatherIngestService.ingestAllLocations();
     }
 }
-

@@ -9,6 +9,7 @@ import {
   listLocations,
   runIngest,
   type CurrentWeatherResponse,
+  type IngestRunResponse,
   type HourlyWeatherResponse,
   type LocationResponse,
 } from './api'
@@ -43,6 +44,10 @@ function formatKst(value: string) {
 function fmtNumber(value: number | null | undefined, unit = '', digits = 1) {
   if (value == null || !Number.isFinite(value)) return '-'
   return `${value.toFixed(digits)}${unit}`
+}
+
+function ingestSummaryMessage(result: IngestRunResponse) {
+  return `Ingest 결과: 대상 ${result.totalLocations}, 수집 ${result.fetchedLocations}, 신규 ${result.insertedSnapshots}, 갱신 ${result.updatedSnapshots}, 변경없음 ${result.unchangedSnapshots}, 미수집 ${result.providerMisses}, alert ${result.alertsCreated}`
 }
 
 function App() {
@@ -190,7 +195,8 @@ function App() {
     if (targetLocations.length === 0) return
     setIngesting(true)
     try {
-      await runIngest()
+      const result = await runIngest()
+      setSeedHint(ingestSummaryMessage(result))
       await refreshCurrentAll(targetLocations)
       if (selectedLocationId) {
         void refreshHourly(selectedLocationId)
