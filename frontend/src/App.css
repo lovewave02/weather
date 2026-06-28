@@ -462,6 +462,10 @@ select:focus {
   margin-top: 14px;
 }
 
+.subscriptionsPanel {
+  margin-top: 14px;
+}
+
 .gridSingle {
   display: grid;
   grid-template-columns: 1fr;

@@ -8,8 +8,10 @@ import {
   getCurrentWeather,
   getHealth,
   getHourlyWeather,
+  getUserByEmail,
   listAlerts,
   listLocations,
+  listSubscriptions,
   runIngest,
   type AlertEventResponse,
   type CurrentWeatherResponse,
@@ -109,6 +111,9 @@ function App() {
   const [alerts, setAlerts] = useState<AlertEventResponse[]>([])
   const [alertsState, setAlertsState] = useState<AlertLoadState>('idle')
   const [alertsHint, setAlertsHint] = useState<string | null>(null)
+  const [subscriptions, setSubscriptions] = useState<SubscriptionResponse[]>([])
+  const [subscriptionsHint, setSubscriptionsHint] = useState<string | null>(null)
+  const [subscriptionsLoading, setSubscriptionsLoading] = useState(false)
 
   const selectedLocation = useMemo(() => {
     if (!selectedLocationId) return null
@@ -219,6 +224,20 @@ function App() {
     }
   }
 
+  async function refreshSubscriptions(userId: string) {
+    setSubscriptionsLoading(true)
+    setSubscriptionsHint(null)
+    try {
+      const res = await listSubscriptions(userId)
+      setSubscriptions(res)
+    } catch (error) {
+      setSubscriptions([])
+      setSubscriptionsHint(errorMessage(error))
+    } finally {
+      setSubscriptionsLoading(false)
+    }
+  }
+
   async function handleCreateLocation(event: FormEvent) {
     event.preventDefault()
     setFormHint(null)
@@ -270,6 +289,23 @@ function App() {
       setCurrentUser(user)
       setUserHint(`알림 사용자 연결: ${user.email}`)
       void refreshAlerts(user.id)
+      void refreshSubscriptions(user.id)
+    } catch (error) {
+      setUserHint(errorMessage(error))
+    } finally {
+      setCreatingUser(false)
+    }
+  }
+
+  async function handleLoadUserByEmail() {
+    setCreatingUser(true)
+    setUserHint(null)
+    try {
+      const user = await getUserByEmail(userEmail.trim())
+      setCurrentUser(user)
+      setUserHint(`기존 사용자 연결: ${user.email}`)
+      void refreshAlerts(user.id)
+      void refreshSubscriptions(user.id)
     } catch (error) {
       setUserHint(errorMessage(error))
     } finally {
@@ -303,6 +339,7 @@ function App() {
       setLastSubscription(subscription)
       setSubscriptionHint(`구독 생성 완료: ${subscriptionLabel(subscription.ruleType, String(subscription.threshold))}`)
       void refreshAlerts(currentUser.id)
+      void refreshSubscriptions(currentUser.id)
     } catch (error) {
       setSubscriptionHint(errorMessage(error))
     } finally {
@@ -547,6 +584,9 @@ function App() {
                 <button type="submit" disabled={creatingUser}>
                   {creatingUser ? 'Creating…' : currentUser ? 'Create Another User' : 'Create Alert User'}
                 </button>
+                <button className="ghost" type="button" onClick={() => void handleLoadUserByEmail()} disabled={creatingUser}>
+                  {creatingUser ? 'Loading…' : 'Load Existing'}
+                </button>
                 <div className="hint">{userHint}</div>
               </div>
             </form>
@@ -587,6 +627,43 @@ function App() {
             {lastSubscription && (
               <div className="muted small">
                 Last rule: {subscriptionLabel(lastSubscription.ruleType, String(lastSubscription.threshold))}
+              </div>
+            )}
+
+            {currentUser && (
+              <div className="subscriptionsPanel">
+                <div className="row spread">
+                  <div className="muted small">Current rules</div>
+                  <button
+                    className="ghost"
+                    type="button"
+                    onClick={() => void refreshSubscriptions(currentUser.id)}
+                    disabled={subscriptionsLoading}
+                  >
+                    {subscriptionsLoading ? 'Loading…' : 'Reload Rules'}
+                  </button>
+                </div>
+                {subscriptionsHint && <div className="notice">Subscription error: {subscriptionsHint}</div>}
+                {subscriptions.length === 0 && !subscriptionsHint && (
+                  <div className="muted small">아직 저장된 rule이 없어. 위에서 rule을 추가해봐.</div>
+                )}
+                {subscriptions.length > 0 && (
+                  <div className="alertList">
+                    {subscriptions.slice(0, 8).map((subscription) => (
+                      <div key={subscription.id} className="alertItem">
+                        <div className="row spread">
+                          <span className={`badge ${subscription.enabled ? 'ok' : 'warn'}`}>
+                            {subscription.enabled ? 'enabled' : 'disabled'}
+                          </span>
+                          <span className="muted tiny">{formatKst(subscription.createdAt)}</span>
+                        </div>
+                        <div className="alertMessage">
+                          {subscriptionLabel(subscription.ruleType, String(subscription.threshold))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 

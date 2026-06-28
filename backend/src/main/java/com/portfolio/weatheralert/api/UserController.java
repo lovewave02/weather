@@ -5,7 +5,9 @@ import com.portfolio.weatheralert.service.dto.CreateUserRequest;
 import com.portfolio.weatheralert.service.dto.UserResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -26,5 +28,9 @@ public class UserController {
     public UserResponse create(@Valid @RequestBody CreateUserRequest request) {
         return userService.create(request);
     }
-}
 
+    @GetMapping("/by-email")
+    public UserResponse findByEmail(@RequestParam String email) {
+        return userService.findByEmail(email);
+    }
+}

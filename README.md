@@ -20,7 +20,7 @@
 
 - 저장된 도시 목록과 현재 관측/시간별 예보 확인
 - 수동 `Ingest Now` 실행 후 fetched/new/unchanged/missed 요약 확인
-- alert 사용자 생성, 선택 도시 기준 rule 등록, 최신 alert 이벤트 조회
+- alert 사용자 생성 또는 기존 이메일 재연결, 선택 도시 기준 rule 등록, 현재 rule 목록/최신 alert 이벤트 조회
 
 ## Daily Auto Improvement
 

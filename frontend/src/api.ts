@@ -182,11 +182,21 @@ export async function createUser(payload: CreateUserRequest): Promise<UserRespon
   })
 }
 
+export async function getUserByEmail(email: string): Promise<UserResponse> {
+  const query = new URLSearchParams({ email })
+  return request<UserResponse>(`/api/v1/users/by-email?${query.toString()}`)
+}
+
 export async function createSubscription(payload: CreateSubscriptionRequest): Promise<SubscriptionResponse> {
   return request<SubscriptionResponse>('/api/v1/subscriptions', {
     method: 'POST',
     body: JSON.stringify(payload),
   })
+}
+
+export async function listSubscriptions(userId: string): Promise<SubscriptionResponse[]> {
+  const query = new URLSearchParams({ userId })
+  return request<SubscriptionResponse[]>(`/api/v1/subscriptions?${query.toString()}`)
 }
 
 export async function listAlerts(userId: string): Promise<AlertEventResponse[]> {

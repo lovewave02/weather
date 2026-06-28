@@ -1,5 +1,6 @@
 package com.portfolio.weatheralert.service;
 
+import java.util.List;
 import java.util.UUID;
 
 import com.portfolio.weatheralert.domain.AppUser;
@@ -44,5 +45,11 @@ public class SubscriptionService {
         );
         return SubscriptionResponse.from(saved);
     }
-}
 
+    @Transactional(readOnly = true)
+    public List<SubscriptionResponse> listForUser(UUID userId) {
+        return subscriptionRepository.findByUserIdOrderByCreatedAtDesc(userId).stream()
+                .map(SubscriptionResponse::from)
+                .toList();
+    }
+}

@@ -29,10 +29,11 @@ Completed on 2026-06-28:
 - [x] reject impossible latitude/longitude values at the location API boundary and return field-level validation details for invalid coordinate payloads
 - [x] return manual ingest run summaries from the API and surface them in the dashboard so operators can see fetched/new/unchanged/missed counts after a refresh
 - [x] surface the alert flow in the dashboard so a user can create an alert user, add a rule for the selected city, and inspect recent alert events after ingest
+- [x] let the dashboard reconnect an existing alert user by email and reload the current saved rules so the alert flow survives a fresh session
 
 Still open:
 
-- [ ] collect the next public cleanup task that creates stronger adoption signal beyond maintainer-surface, operator-surface, and basic alert-flow hardening
+- [ ] collect the next public cleanup task that creates stronger adoption signal beyond maintainer-surface, operator-surface, and reusable alert-flow hardening
 
 Current observed note:
 
@@ -60,6 +61,10 @@ Current observed note:
   alert APIs end-to-end for a basic user flow: create alert user, create rule
   for the selected city, run ingest, and reload recent alert events. Frontend
   production build passed after the new flow was wired up.
+- Rechecked on 2026-06-28: the same dashboard can now reconnect an existing
+  alert user by email and reload the current saved rules through new lightweight
+  backend lookup/list endpoints; backend verification passed with `13 tests, 0
+  failures` and frontend `npm run build` also passed.
 
 This issue should act as the public anchor for the next small maintenance changes instead of keeping the backlog private.
 
