@@ -26,10 +26,11 @@ Completed on 2026-06-28:
 - [x] documented the expected local verification matrix for backend, frontend, and daily automation
 - [x] removed the false H2-backed scheduled `shedlock` noise from test-profile verification by gating scheduling infrastructure behind `weather.scheduling.enabled`
 - [x] aligned release-facing maintainer docs and the contribution guide with the real backend verification command (`mvn test`) so public maintainer guidance matches the current repository state
+- [x] reject impossible latitude/longitude values at the location API boundary and return field-level validation details for invalid coordinate payloads
 
 Still open:
 
-- [ ] collect the next public cleanup task that can create stronger user or adoption signals beyond maintainer-surface hygiene
+- [ ] collect the next public cleanup task that creates stronger operator or adoption signal beyond maintainer-surface hardening
 
 Current observed note:
 
@@ -42,6 +43,11 @@ Current observed note:
 - Rechecked on 2026-06-28: the contribution guide now points directly to
   `mvn test` for the same reason, so public verification guidance is consistent
   across maintainer-facing docs.
+- Rechecked on 2026-06-28: `mvn test` now also covers a controller-level
+  regression that rejects out-of-range coordinates with `400 Bad Request`
+  details (`latitude must be less than or equal to 90.0`,
+  `longitude must be less than or equal to 180.0`) instead of accepting
+  impossible world coordinates.
 
 This issue should act as the public anchor for the next small maintenance changes instead of keeping the backlog private.
 
