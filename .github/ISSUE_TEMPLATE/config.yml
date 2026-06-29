@@ -3,3 +3,6 @@ contact_links:
   - name: Contribution guide
     url: https://github.com/lovewave02/weather/blob/main/CONTRIBUTING.md
     about: Read the local verification and PR expectations before opening an issue.
+  - name: Alert flow quickstart
+    url: https://github.com/lovewave02/weather/blob/main/docs/ALERT_FLOW_QUICKSTART.md
+    about: Try the fastest dashboard/API path before reporting usage feedback.

@@ -1,0 +1,48 @@
+name: Usage feedback
+description: Share a quick demo result, operator note, or adoption-facing feedback.
+title: "[Feedback] "
+labels:
+  - question
+body:
+  - type: dropdown
+    id: path
+    attributes:
+      label: Which path did you try?
+      options:
+        - dashboard quick demo
+        - API quick demo
+        - alert-flow smoke script
+        - daily automation
+        - other
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: What did you try?
+      description: Summarize the workflow, city, and outcome you were aiming for.
+      placeholder: |
+        I followed the quick demo, loaded Seoul, created an alert user, and tried to dispatch pending alerts.
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: What happened?
+      description: Include the useful result, friction point, or missing step you noticed.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Commands, screenshots, or outputs
+      description: Paste the exact command, response, screenshot, or console output when possible.
+      placeholder: |
+        - `python scripts/alert_flow_smoke.py`
+        - browser screenshot
+        - response body
+  - type: textarea
+    id: follow_up
+    attributes:
+      label: What would make this easier next time?
+      description: Suggest the smallest improvement that would help another outside user or operator.

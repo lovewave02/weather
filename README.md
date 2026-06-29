@@ -69,6 +69,7 @@ python scripts/daily_weather_update.py
 - Release checklist: [`docs/RELEASE_CHECKLIST.md`](docs/RELEASE_CHECKLIST.md)
 - Changelog: [`CHANGELOG.md`](CHANGELOG.md)
 - Smoke test script: `python scripts/alert_flow_smoke.py`
+- Usage feedback template: `.github/ISSUE_TEMPLATE/usage_feedback.yml`
 - Current public backlog anchor: issue [`#1`](https://github.com/lovewave02/weather/issues/1)
 
 ## Maintainer roadmap
@@ -82,3 +83,4 @@ Short-term maintainer surface goals:
 5. Keep public follow-up work anchored to issue `#1` and the verification matrix
 6. Keep one copy-paste quickstart current so outsiders can try the alert flow quickly
 7. Keep one repeatable smoke script current so maintainers and outsiders can verify the alert lifecycle without clicking through the UI
+8. Keep one public usage-feedback intake path open so outside demo friction turns into actionable follow-up work

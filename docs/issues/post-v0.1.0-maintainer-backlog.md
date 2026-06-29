@@ -44,6 +44,7 @@ Completed on 2026-06-28:
 - [x] expose the same manual dispatch path in the dashboard so an outsider can finish the alert flow in the UI and see `sentAt` without waiting for the scheduled dispatcher
 - [x] return specific duplicate-create conflict details for users, locations, and alert rules so failed actions explain what already exists
 - [x] pull release, CI, and quick-demo signals into the README header so an outsider can trust the current public state faster
+- [x] add a dedicated usage-feedback intake template so outsider quick-demo friction can turn into a focused public follow-up instead of staying implicit
 
 Still open:
 
@@ -75,6 +76,9 @@ Current observed note:
 - Rechecked on 2026-06-28: the repo now has two public releases (`v0.1.0`,
   `v0.1.1`), and `v0.1.1` is tied to the current alert-flow proof path plus an
   owner-authored release update comment on this issue.
+- Rechecked on 2026-06-29: the public issue intake now distinguishes bugs,
+  feature requests, and quick-demo usage feedback, so first-run friction has a
+  direct path into issue-driven maintainer work.
 - Rechecked on 2026-06-28: the conservative eligibility check still returns
   `manual_core_maintainer_evidence_needed`; the remaining missing signal is
   outside adoption/feedback, not missing maintainer surface.

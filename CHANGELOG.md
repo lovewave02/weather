@@ -10,6 +10,9 @@ This file follows a simple keep-a-changelog style.
 
 - Pull release, CI, license, and quick-demo trust signals into the README
   header so outsiders can identify the current public state faster
+- Add a dedicated usage-feedback issue template and quickstart link so outside
+  demo friction can turn into a narrower public follow-up instead of staying
+  private
 
 ## v0.1.1 - 2026-06-28
 

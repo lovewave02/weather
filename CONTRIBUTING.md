@@ -22,9 +22,12 @@ This repository is a monorepo for a weather alert platform plus a small daily da
 
 ## Issue intake
 
-- Use the bug/feature templates under `.github/ISSUE_TEMPLATE/`.
+- Use the bug/feature/usage-feedback templates under `.github/ISSUE_TEMPLATE/`.
 - Include the affected area, reproduction steps, and exact validation commands.
 - Keep one issue focused on one operator or user problem.
+- If you are reporting first-run friction or adoption feedback, prefer the
+  usage-feedback template and link the exact quickstart path or smoke command
+  you tried.
 
 ## Before opening a PR
 

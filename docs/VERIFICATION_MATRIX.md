@@ -95,6 +95,8 @@ These are the first post-`v0.1.0` maintainer checks to keep visible:
    flow without reading the whole codebase first.
 5. Keep one repeatable smoke script current so maintainers can verify the alert
    lifecycle without stepping through the UI manually.
+6. Keep one public usage-feedback intake path current so quick-demo friction
+   turns into issue-driven follow-up work.
 
 ### Observed on 2026-06-28
 
@@ -111,6 +113,9 @@ These are the first post-`v0.1.0` maintainer checks to keep visible:
   `scripts/alert_flow_smoke.py`; keep it aligned with the same alert lifecycle
   so maintainers can verify the flow without a browser session and still prove
   one real alert event plus manual dispatcher processing on the default path.
+- Public intake should now distinguish reproducible bugs/features from
+  quick-demo or adoption feedback so first-run friction can land in a narrower
+  follow-up issue instead of being dropped into a vague roadmap bucket.
 
 Treat future scheduler noise in tests as a regression.
 
