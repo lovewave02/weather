@@ -45,6 +45,7 @@ Completed on 2026-06-28:
 - [x] return specific duplicate-create conflict details for users, locations, and alert rules so failed actions explain what already exists
 - [x] pull release, CI, and quick-demo signals into the README header so an outsider can trust the current public state faster
 - [x] add a dedicated usage-feedback intake template so outsider quick-demo friction can turn into a focused public follow-up instead of staying implicit
+- [x] make the quick-demo success checkpoints and public usage-feedback handoff explicit in the README and alert quickstart so a first-run user knows when the flow actually worked
 
 Still open:
 
@@ -79,6 +80,11 @@ Current observed note:
 - Rechecked on 2026-06-29: the public issue intake now distinguishes bugs,
   feature requests, and quick-demo usage feedback, so first-run friction has a
   direct path into issue-driven maintainer work.
+- Rechecked on 2026-06-30: the public README and alert quickstart now name the
+  success checkpoints (`Load Korea`, ingest summary, saved rule visibility,
+  `Dispatch Pending`, and `sentAt`) and link directly to the public
+  usage-feedback form, so the next outside report can point to one exact
+  failing step instead of a vague "demo did not work" note.
 - Rechecked on 2026-06-28: the conservative eligibility check still returns
   `manual_core_maintainer_evidence_needed`; the remaining missing signal is
   outside adoption/feedback, not missing maintainer surface.

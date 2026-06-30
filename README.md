@@ -21,11 +21,24 @@ Fastest outsider path:
 4. Click `Load Korea`, then `Ingest Now`
 5. Create or load an alert user, add a rule, run `Ingest Now` again, and click `Dispatch Pending`
 
+What success looks like on the first pass:
+
+- `Load Korea` fills the left grid with one or more city cards.
+- `Ingest Now` shows a summary with fetched/new/unchanged/missed counts instead of a silent refresh.
+- `Create Alert User` or `Load Existing` reveals the current saved rules area for the selected email.
+- Creating a rule adds a row under `Current rules`.
+- `Dispatch Pending` eventually leaves the newest alert event in `SENT` with a visible `sentAt` timestamp.
+
 If you want one repeatable CLI proof instead of the browser path, run:
 
 ```bash
 python scripts/alert_flow_smoke.py
 ```
+
+If one of those checkpoints fails or feels unclear, open the public usage-feedback
+form at
+[`usage feedback`](https://github.com/lovewave02/weather/issues/new?template=usage_feedback.yml)
+so the next follow-up can stay issue-driven instead of private.
 
 ## Run (Backend)
 
@@ -70,6 +83,7 @@ python scripts/daily_weather_update.py
 - Changelog: [`CHANGELOG.md`](CHANGELOG.md)
 - Smoke test script: `python scripts/alert_flow_smoke.py`
 - Usage feedback template: `.github/ISSUE_TEMPLATE/usage_feedback.yml`
+- Public usage-feedback form: `https://github.com/lovewave02/weather/issues/new?template=usage_feedback.yml`
 - Current public backlog anchor: issue [`#1`](https://github.com/lovewave02/weather/issues/1)
 
 ## Maintainer roadmap
@@ -84,3 +98,4 @@ Short-term maintainer surface goals:
 6. Keep one copy-paste quickstart current so outsiders can try the alert flow quickly
 7. Keep one repeatable smoke script current so maintainers and outsiders can verify the alert lifecycle without clicking through the UI
 8. Keep one public usage-feedback intake path open so outside demo friction turns into actionable follow-up work
+9. Keep quick-demo success checkpoints explicit so a first-run user knows when the flow actually worked

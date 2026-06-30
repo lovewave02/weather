@@ -13,6 +13,9 @@ This file follows a simple keep-a-changelog style.
 - Add a dedicated usage-feedback issue template and quickstart link so outside
   demo friction can turn into a narrower public follow-up instead of staying
   private
+- Call out the quick-demo success checkpoints and public feedback handoff in
+  the README and alert quickstart so a first-run user can tell whether the
+  alert flow actually worked before filing the next follow-up
 
 ## v0.1.1 - 2026-06-28
 

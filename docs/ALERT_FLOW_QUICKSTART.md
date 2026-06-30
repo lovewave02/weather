@@ -40,6 +40,14 @@ npm run dev
 8. Use `Disable Rule` or `Enable Rule` from `Current rules` to test the saved
    rule lifecycle.
 
+Expected visible checkpoints:
+
+- After `Load Korea`, the city grid is populated instead of staying empty.
+- After the first `Ingest Now`, the dashboard shows fetched/new/unchanged/missed counts.
+- After `Create Alert User` or `Load Existing`, the email stays attached to the alert-flow panel and existing rules can load.
+- After rule creation, `Current rules` lists the selected city and rule type.
+- After `Dispatch Pending`, the latest alert list can show `SENT` plus `sentAt`.
+
 ## API Path
 
 These examples assume the backend runs on `http://localhost:8080`.
@@ -126,6 +134,11 @@ List alert events:
 ```bash
 curl -sS http://localhost:8080/api/v1/users/<user-id>/alerts
 ```
+
+If the UI or API path breaks at any checkpoint, record the exact failing step in
+the public usage-feedback form:
+
+- `https://github.com/lovewave02/weather/issues/new?template=usage_feedback.yml`
 
 ## Verification
 

@@ -97,6 +97,8 @@ These are the first post-`v0.1.0` maintainer checks to keep visible:
    lifecycle without stepping through the UI manually.
 6. Keep one public usage-feedback intake path current so quick-demo friction
    turns into issue-driven follow-up work.
+7. Keep the quick-demo docs explicit about the expected success checkpoints so
+   a first-run user knows when the flow actually worked before filing feedback.
 
 ### Observed on 2026-06-28
 
@@ -116,6 +118,9 @@ These are the first post-`v0.1.0` maintainer checks to keep visible:
 - Public intake should now distinguish reproducible bugs/features from
   quick-demo or adoption feedback so first-run friction can land in a narrower
   follow-up issue instead of being dropped into a vague roadmap bucket.
+- Public quick-demo docs should call out the visible success checkpoints and the
+  usage-feedback handoff together so a first-run user can tell whether the
+  alert flow actually succeeded before opening the next follow-up.
 
 Treat future scheduler noise in tests as a regression.
 
