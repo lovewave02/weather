@@ -1,19 +1,19 @@
 {
-  "updated_at_kst": "2026-10-28T10:30",
+  "updated_at_kst": "2026-10-29T10:45",
   "location": "Seoul",
   "current": {
-    "time": "2026-10-28T10:30",
+    "time": "2026-10-29T10:45",
     "interval": 900,
-    "temperature_2m": 6.2,
-    "apparent_temperature": 2.5,
-    "precipitation_probability": 0,
+    "temperature_2m": 8.4,
+    "apparent_temperature": 5.0,
+    "precipitation_probability": 42,
     "pm2_5": null,
     "pm10": null
   },
   "daily": {
-    "date": "2026-10-28",
-    "temperature_2m_min": 2.1,
-    "temperature_2m_max": 11.3,
-    "precipitation_probability_max": 0
+    "date": "2026-10-29",
+    "temperature_2m_min": 4.8,
+    "temperature_2m_max": 11.0,
+    "precipitation_probability_max": 92
   }
 }
